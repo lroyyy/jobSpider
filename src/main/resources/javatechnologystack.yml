@@ -1,0 +1,16 @@
+后端技术:
+ - name: SSH
+ - name: SSM
+ - name: SpringMVC
+   alias: 
+   - Spring MVC
+ - name: SpringBoot
+数据库框架:
+ - name: MyBatis
+ - name: iBatis
+ - name: Hibernate
+数据库:
+ - name: MySQL
+ - name: SQLServer
+   alias:
+   - MSSQL

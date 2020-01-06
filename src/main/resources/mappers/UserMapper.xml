@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+	"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.nebula.oa.mapper.UserMapper">
+	<!-- 根据姓名查询信息 -->
+	<select id="findByLastName" resultType="com.nebula.oa.entity.User">
+		SELECT 
+			id,
+			workCode,
+			companyId,
+		FROM hrmResource
+	</select>
+	<!-- 根据用户姓名查询工号 -->
+	<select id="findWorkCodeByUsername" resultType="String">
+		SELECT workcode	FROM hrmResource WHERE lastname=#{username}
+	</select>
+	<!-- 根据工号查询用户姓名 -->
+	<select id="findUsernameByWorkCode" resultType="String">
+		SELECT lastname	FROM hrmResource WHERE workcode=#{workcode}
+	</select>
+	<!-- 查询近3个月未登录的用户信息 -->
+	<select id="findDead" resultType="com.nebula.oa.entity.UserVO">
+		SELECT
+			hr.id,lastname AS name,
+			workcode AS workCode,
+			cp.companyname AS company,
+			dept.departmentname AS department,
+			lastlogindate AS lastLoginDate
+		FROM HrmResource AS hr
+		LEFT JOIN HrmDepartment AS dept ON hr.departmentid=dept.id
+		LEFT JOIN HrmCompany AS cp ON hr.subcompanyid1=cp.id
+		WHERE lastlogindate NOT BETWEEN CONVERT(VARCHAR(100), GETDATE()-90, 23) 
+		AND CONVERT(VARCHAR(100), GETDATE(), 23)
+	</select>
+	<!--  -->
+	<select id="findByDepartments" resultType="com.nebula.oa.entity.UserVO">
+		SELECT 
+			hr.id AS userId,hr.workcode AS workCode,
+			hr.lastname AS username,co.subcompanyname AS company,
+			dept.departmentname AS department,dept.departmentname AS operatorName
+		FROM HrmResource AS hr
+		LEFT JOIN HrmDepartment AS dept ON dept.id=hr.departmentid
+		LEFT JOIN HrmSubCompany AS co ON hr.subcompanyid1=co.id
+		WHERE dept.id IN 
+		<foreach item="department" index="index" collection="departments" open="(" separator="," close=")">  
+　　　　		#{department.id}  
+　　		</foreach>
+		AND hr.seclevel>=#{levelFloor} AND hr.seclevel<![CDATA[<=]]>#{levelTopLimit} 
+	</select>
+	<!-- 根据用户姓名查询用户id -->
+	<select id="findIdByUsername" resultType="Integer">
+		SELECT id FROM HrmResource WHERE lastname=#{username}
+	</select>
+	<!-- 获取所有用户名 -->
+	<select id="findAllUsernames" resultType="String">
+		SELECT lastname FROM HrmResource
+	</select>
+	<!-- 根据部门id查询该部门及其子部门下所有员工id -->
+	<select id="findUserIdByDepartmentId" resultType="Integer">
+		WITH hgo AS (
+			SELECT *, 0 AS rank	FROM HrmDepartment t WHERE t.id = #{departmentId}
+			UNION ALL
+			SELECT h.*, h1.rank + 1	FROM HrmDepartment h JOIN hgo h1 ON h.supdepid = h1.id
+		)
+		SELECT hr.id FROM HrmResource AS hr JOIN hgo ON hgo.id=hr.departmentid WHERE status=1 OR status=2 OR status=3
+	</select>
+	<!-- 根据部门id查询该部门所有员工信息 -->
+	<select id="findUserByDepartmentId" resultType="com.nebula.oa.entity.User">
+		SELECT hr.id AS id,hr.lastname AS name
+		FROM HrmResource AS hr
+		JOIN HrmDepartment AS dept ON dept.id=hr.departmentid
+		WHERE dept.id=#{departmentId} AND (status=1 OR status=2 OR status=3)
+	</select>
+	<!-- 根据部门id查询该部门及其子部门下所有员工信息 -->
+	<select id="findUserByDepartmentIdContains" resultType="com.nebula.oa.entity.User">
+		WITH hgo AS (
+			SELECT *, 0 AS rank	FROM HrmDepartment t WHERE t.id = #{departmentId}
+			UNION ALL
+			SELECT h.*, h1.rank + 1	FROM HrmDepartment h JOIN hgo h1 ON h.supdepid = h1.id
+		)
+		SELECT hr.id AS id,hr.lastname AS name FROM HrmResource AS hr JOIN hgo ON hgo.id=hr.departmentid
+		WHERE status=1 OR status=2 OR status=3
+	</select>
+</mapper>
+
+
