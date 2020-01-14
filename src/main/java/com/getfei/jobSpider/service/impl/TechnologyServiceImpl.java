@@ -23,7 +23,7 @@ public class TechnologyServiceImpl implements ITechnologyService{
 	@Override
 	public boolean add(String name, String type, String[] aliases) {
 		Technology technology=new Technology(name, type,aliases);
-		technologyDao.save(technology);
+		technologyDao.insert(technology);
 		return false;
 	}
 
