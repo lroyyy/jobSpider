@@ -12,4 +12,6 @@ public interface ITechnologyService {
 	
 	boolean add(String name,String type,String[] aliases);
 	
+	List<String> ListType();
+	
 }

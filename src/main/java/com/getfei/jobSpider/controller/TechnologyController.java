@@ -36,5 +36,12 @@ public class TechnologyController extends BaseController {
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(SUCCESS);
 		return rs;
 	}
+	
+	@GetMapping("/types")
+	public ResponseResult<List<String>> listType() {
+		List<String> types=technologyService.ListType();
+		ResponseResult<List<String>> rs = new ResponseResult<>(SUCCESS,types);
+		return rs;
+	}
 
 }
