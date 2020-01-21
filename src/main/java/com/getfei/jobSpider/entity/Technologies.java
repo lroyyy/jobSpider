@@ -80,9 +80,9 @@ public class Technologies {
 		for (int i = 0; i < elements.length; i++) {
 			String key = elements[i][0];
 //			Technology technology = new Technology(key, type);
-			Technology technology=new Technology(key,type.getName());
-			technology.setAliases(elements[i]);
-			map.put(key, technology);
+//			Technology technology=new Technology(key,type.getName());
+//			technology.setAliases(elements[i]);
+//			map.put(key, technology);
 		}
 	}
 

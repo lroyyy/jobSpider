@@ -30,7 +30,7 @@ public class PositionDaoImpl implements IPositionDao{
 
 	@Override
 	public Position findOne(String positionName) {
-		return mongoTemplate.findOne(Query.query(Criteria.where("name").is(positionName)), Position.class);
+		return mongoTemplate.findOne(Query.query(Criteria.where("name").is(positionName)), Position.class,"position");
 	}
 	
 }

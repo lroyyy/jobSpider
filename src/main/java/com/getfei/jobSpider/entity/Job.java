@@ -32,12 +32,11 @@ public class Job extends BaseEntity{
     private String[] keyWords;
     /**职位描述*/
     private String jobMessage;
-    /**地址*/
+    /**位置*/
     private String location;
     /**技术栈*/
     private List<Technology> technologies;
+    /**url*/
+    private String url;
     
-    public void addTechnology(Technology t) {
-    	
-    }
 }

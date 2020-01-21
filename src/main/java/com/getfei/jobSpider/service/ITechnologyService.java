@@ -8,6 +8,8 @@ public interface ITechnologyService {
 
 	List<Technology> list();
 	
+	List<Technology> getByType(String type);
+	
 	boolean add(String name,String type,String[] aliases);
 	
 }

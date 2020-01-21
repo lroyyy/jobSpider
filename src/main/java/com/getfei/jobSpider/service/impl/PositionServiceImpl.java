@@ -34,12 +34,23 @@ public class PositionServiceImpl implements IPositionService {
 
 	@Autowired
 	private IPositionDao positionDao;
+	
+	@Override
+	public List<Position> list() {
+		List<Position> positions=positionDao.findAll();
+		return positions;
+	}
+	
+	@Override
+	public Position getByName(String positionName) {
+		return positionDao.findOne(positionName);
+	}
 
 	/**
 	 * 爬取地区信息
 	 */
 	@Override
-	public void getPosition() {
+	public void fetchAndInsert() {
 		logger.info("开始爬虫。");
 		int min = 10000;// 北京
 		// int max = 100000;

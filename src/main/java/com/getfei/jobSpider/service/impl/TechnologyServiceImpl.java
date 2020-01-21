@@ -27,4 +27,10 @@ public class TechnologyServiceImpl implements ITechnologyService{
 		return false;
 	}
 
+	@Override
+	public List<Technology> getByType(String type) {
+		List<Technology> technologies=technologyDao.findByType(type);
+		return technologies;
+	}
+
 }

@@ -25,14 +25,7 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">用户职业</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="classify" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <!-- <a class="layui-btn" lay-submit="" lay-filter="data-search-btn">搜索</a> -->
-                            <button class="layui-btn data-add-btn">添加</button>
+                            <a class="layui-btn" lay-submit="" lay-filter="data-search-btn">搜索</a>
                         </div>
                     </div>
                 </form>
@@ -57,27 +50,36 @@
             form = layui.form,
             table = layui.table;
 
-        table.render({
-            elem: '#currentTableId',
-            url: '/technology/',
-            response: {
-				statusName: 'state',// 规定数据状态的字段名称，默认：code
-				statusCode: 200,// 规定成功的状态码，默认：0
-				msgName: 'message',// 规定状态信息的字段名称，默认：msg
-				countName: 'dataCount',// 规定数据总数的字段名称，默认：count
-				dataName: 'data' // 规定数据列表的字段名称，默认：data
-			},
-            cols: [[
-                {type: "checkbox", width: 50, fixed: "left"},
-                {field: 'type', width: 150, title: '类别', sort: true},
-                {field: 'name', width: 150, title: '名称'},
-                {field: 'aliases', width: 300, title: '别名', sort: true},
-                {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"}
-            ]],
-            limits: [10, 15, 20, 25, 50, 100],
-            limit: 15,
-            page: true
-        });
+        /**展示技术栈*/
+        const showTechnologies = function (typeName) {
+            let url = '/technologies';
+            if (typeName != undefined) {
+                url += "?typeName=" + typeName;
+            }
+            table.render({
+                elem: '#currentTableId',
+                url: url,
+                response: {
+                    statusName: 'state',// 规定数据状态的字段名称，默认：code
+                    statusCode: 200,// 规定成功的状态码，默认：0
+                    msgName: 'message',// 规定状态信息的字段名称，默认：msg
+                    countName: 'dataCount',// 规定数据总数的字段名称，默认：count
+                    dataName: 'data' // 规定数据列表的字段名称，默认：data
+                },
+                cols: [[
+                    { type: "checkbox", width: 50, fixed: "left" },
+                    { field: 'type', width: 150, title: '类别', sort: true },
+                    { field: 'name', width: 150, title: '名称' },
+                    { field: 'aliases', width: 300, title: '别名', sort: true },
+                    { title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center" }
+                ]],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 15,
+                page: true
+            });
+        }
+
+        showTechnologies();
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
@@ -92,7 +94,8 @@
                     curr: 1
                 }
                 , where: {
-                    searchParams: result
+                    // searchParams: result
+                    type: data.field.type
                 }
             }, 'data');
 
@@ -108,7 +111,7 @@
                 data: "data",
                 dataType: "json",
                 success: function (response) {
-                    if(response.state==200){
+                    if (response.state == 200) {
                         layer.msg('添加成功');
                     }
                 }

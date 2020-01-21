@@ -8,7 +8,7 @@
     "href": "page/welcome-1.html"
   },
   "logoInfo": {
-    "title": "IT找工作助手",
+    "title": "IT技术栈分析",
     "image": "images/logo.png",
     "href": ""
   },
@@ -17,6 +17,12 @@
       "title": "常规管理",
       "icon": "fa fa-address-book",
       "child": [
+        {
+          "title": "开始",
+          "href": "page/start.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self"
+        },
         {
           "title": "新增技术栈",
           "href": "page/technology-save.html",

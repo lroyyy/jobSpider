@@ -22,6 +22,7 @@ import com.getfei.jobSpider.entity.AnalysisResult;
 import com.getfei.jobSpider.entity.Counter;
 import com.getfei.jobSpider.entity.EchartsData;
 import com.getfei.jobSpider.entity.FetchedResult;
+import com.getfei.jobSpider.entity.Job;
 import com.getfei.jobSpider.entity.Technologies;
 import com.getfei.jobSpider.entity.Technology;
 import com.getfei.jobSpider.entity.TechnologyType;
@@ -33,12 +34,6 @@ public class TestAnalyzerService implements IAnalyzerService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	private Map<Technology, Integer> technologyCounter;
 	
-	@Autowired
-	private ITechnologyDao technologyDao;
-	
-	@Autowired
-	private IJobDao jobDao;
-
 	public void initTechnologyCounter() {
 		technologyCounter = new HashMap<>();
 		for (Technology technology : Technologies.technologyMapping.values()) {
@@ -51,17 +46,42 @@ public class TestAnalyzerService implements IAnalyzerService {
 		initTechnologyCounter();
 		// 遍历job，统计次数
 		for (int i = 0, size = fetchedResult.getJobs().size(); i < size; i++) {
-			String jobMessage = fetchedResult.getJobs().get(i).getJobMessage();
+			Job job =fetchedResult.getJobs().get(i);
+			String url=job.getUrl();
+			String jobTitle=job.getJobTitle();
+			String salary=job.getSalary();
+			String companyName=job.getCompanyName();
+			String jobMessage = job.getJobMessage();
+			logger.info("开始分析：url="+url+",职位="+jobTitle+",薪水="+salary+",公司名称="+companyName);
+//			logger.info("信息："+jobMessage);
 			// 遍历technologyMapping，找出匹配的technology
 			Technologies.technologyMapping.forEach((key, technology) -> {
-				for (String aliase : technology.getAliases()) {// 遍历别名集
-					if (jobMessage.toLowerCase().contains(aliase.toLowerCase())) {// 匹配，更新次数
-						Integer newCount = technologyCounter.get(technology) + 1;
-						technologyCounter.put(Technologies.technologyMapping.get(key), newCount);
-						logger.info("找到" + aliase + "，新次数=" + newCount);
-						break;
+				boolean finded=false;
+//				logger.info("包含"+technology.getName()+"?");
+				if(jobMessage.toLowerCase().contains(technology.getName().toLowerCase())) {
+//					logger.info("包含"+technology.getName());
+					finded=true;
+				}else {
+					for (String aliase : technology.getAliases()) {// 遍历别名集
+						if(jobMessage.toLowerCase().contains(aliase.toLowerCase())) {
+//							logger.info("包含"+aliase);
+							finded=true;
+						}
 					}
 				}
+				if(finded) {
+					Integer newCount = technologyCounter.get(technology) + 1;
+					technologyCounter.put(Technologies.technologyMapping.get(key), newCount);
+//					logger.info("找到" + technology.getName() + "，新次数=" + newCount);
+				}
+//				for (String aliase : technology.getAliases()) {// 遍历别名集
+//					if (jobMessage.toLowerCase().contains(aliase.toLowerCase())) {// 匹配，更新次数
+//						Integer newCount = technologyCounter.get(technology) + 1;
+//						technologyCounter.put(Technologies.technologyMapping.get(key), newCount);
+//						logger.info("找到" + aliase + "，新次数=" + newCount);
+//						break;
+//					}
+//				}
 			});
 		}
 		// 移除次数为0的技术
@@ -72,12 +92,12 @@ public class TestAnalyzerService implements IAnalyzerService {
 		technologyCounter.forEach((technology, count) -> {
 			String technologyType = technology.getType();
 			if (technologyTypeCounter.containsKey(technologyType)) {// 类型已有
-				logger.info(technologyType + "已存在，且count=" + technologyTypeCounter.get(technologyType)
-						+ "，准备加" + count);
+//				logger.info(technologyType + "已存在，且count=" + technologyTypeCounter.get(technologyType)
+//						+ "，准备加" + count);
 				int newCount = technologyTypeCounter.get(technologyType) + count;
 				technologyTypeCounter.put(technologyType, newCount);
 			} else {// 类型未有
-				logger.info(technologyType + "不存在，count初始化为" + count);
+//				logger.info(technologyType + "不存在，count初始化为" + count);
 				technologyTypeCounter.put(technologyType, count);
 			}
 		});

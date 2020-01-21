@@ -8,7 +8,11 @@ $(function () {
             data:"position="+position,
             dataType: "json",
             success: function (response) {
-                initPie(response.data);
+                if(response.state==200){
+                    initPie(response.data);
+                }else{
+                    alert(response.message);
+                }
             }
         });
     });
@@ -23,6 +27,9 @@ $(function () {
         });
     });
     $("#button-position").on("click", function () {
+        if(!confirm("确定？")){
+            return;
+        }
     	$.ajax({
     		type: "get",
     		url: "/position/",

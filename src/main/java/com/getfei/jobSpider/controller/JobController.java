@@ -15,7 +15,7 @@ import com.getfei.jobSpider.entity.AnalysisResult;
 import com.getfei.jobSpider.entity.FetchedResult;
 import com.getfei.jobSpider.entity.TechnologyType;
 import com.getfei.jobSpider.service.IAnalyzerService;
-import com.getfei.jobSpider.service.IWebFetcherService;
+import com.getfei.jobSpider.service.IFetcherService;
 import com.getfei.jobSpider.util.ResponseResult;
 
 @RestController
@@ -23,14 +23,28 @@ import com.getfei.jobSpider.util.ResponseResult;
 public class JobController extends BaseController {
 
 	@Autowired
-	private IWebFetcherService webFetcherService;
+	private IFetcherService webFetcherService;
 	@Autowired
 	private IAnalyzerService analyzerService;
 
-	@GetMapping("list")
-	public ResponseResult<AnalysisResult> getJobs(@RequestParam("position") String positionName) throws Exception {
-		FetchedResult fetchResult = webFetcherService.fetchJobs(positionName);
-		AnalysisResult result = analyzerService.analyse(fetchResult);
+	@GetMapping()
+	public ResponseResult<AnalysisResult> list(@RequestParam("keyword") String keyword,
+			@RequestParam("position") String positionName) {
+		FetchedResult fetchResult;
+		AnalysisResult result = null;
+		try {
+			fetchResult = webFetcherService.fetchJobs(keyword,positionName);
+			if(fetchResult==null) {
+				logger.debug("fetchResult=null");
+			}
+			if(fetchResult.getJobs()==null) {
+				logger.info("fetchResult.getJobs=null");
+			}
+			result = analyzerService.analyse(fetchResult);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return new ResponseResult<>(SUCCESS, result);
 	}
 

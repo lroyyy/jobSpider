@@ -15,22 +15,24 @@ import com.getfei.jobSpider.service.ITechnologyService;
 import com.getfei.jobSpider.util.ResponseResult;
 
 @RestController
-@RequestMapping("technology")
+@RequestMapping("technologies")
 public class TechnologyController extends BaseController {
 
 	@Autowired
 	private ITechnologyService technologyService;
 
-	@GetMapping("/")
-	public ResponseResult<List<Technology>> list() {
-		ResponseResult<List<Technology>> rs = new ResponseResult<>(SUCCESS, technologyService.list());
+	@GetMapping()
+	public ResponseResult<List<Technology>> get(@RequestParam(value = "type", required = false) String type) {
+		List<Technology> technologies;
+		technologies=type==null||"".equals(type)?technologyService.list():technologyService.getByType(type);
+		ResponseResult<List<Technology>> rs = new ResponseResult<>(SUCCESS, technologies);
 		return rs;
 	}
 
 	@PostMapping("/")
-	public ResponseResult<List<Technology>> add(@RequestParam("name") String name, 
-			@RequestParam("type") String type,@RequestParam("aliases") String[] aliases) {
-		technologyService.add(name,type,aliases);
+	public ResponseResult<List<Technology>> add(@RequestParam("name") String name, @RequestParam("type") String type,
+			@RequestParam("aliases") String[] aliases) {
+		technologyService.add(name, type, aliases);
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(SUCCESS);
 		return rs;
 	}
