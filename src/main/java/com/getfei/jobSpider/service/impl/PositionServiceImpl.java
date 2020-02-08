@@ -42,10 +42,14 @@ public class PositionServiceImpl implements IPositionService {
 	}
 	
 	@Override
-	public Position getByName(String positionName) {
-		return positionDao.findOne(positionName);
+	public Position getByName(String name) {
+		return positionDao.findByName(name);
 	}
 
+	@Override
+	public Position getByCode(String code) {
+		return positionDao.findByCode(code);
+	}
 	/**
 	 * 爬取地区信息
 	 */
@@ -95,6 +99,26 @@ public class PositionServiceImpl implements IPositionService {
 			name = getNameByCode(nextCode.toInt());
 		} while ("全国".equals(name));
 		return nextCode.toInt();
+	}
+
+	@Override
+	public List<Position> listStructured() {
+		List<Position> positions=positionDao.findAll();
+		List<Position> provinces=new ArrayList<>();
+		positions.forEach(position->{
+			if(position.getCode().endsWith("0000")) {//筛选出省
+				provinces.add(position);
+				String head=position.getCode().substring(0,2);
+//				logger.info("name="+position.getName()+",head="+head);
+				positions.forEach(p->{
+					if(!p.getCode().endsWith("0000")&&p.getCode().startsWith(head)) {
+						position.addPosition(p);
+//						logger.info("add"+p.getName()+"to"+position.getName());
+					}
+				});
+			}
+		});
+		return provinces;
 	}
 
 }

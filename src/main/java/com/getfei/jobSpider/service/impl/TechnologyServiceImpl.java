@@ -21,6 +21,12 @@ public class TechnologyServiceImpl implements ITechnologyService{
 	}
 
 	@Override
+	public List<String> ListType() {
+		List<String> types=technologyDao.findAllType();
+		return types;
+	}
+	
+	@Override
 	public boolean add(String name, String type, String[] aliases) {
 		Technology technology=new Technology(name, type,aliases);
 		technologyDao.insert(technology);
@@ -32,11 +38,17 @@ public class TechnologyServiceImpl implements ITechnologyService{
 		List<Technology> technologies=technologyDao.findByType(type);
 		return technologies;
 	}
-
+	
 	@Override
-	public List<String> ListType() {
-		List<String> types=technologyDao.findAllType();
-		return types;
+	public List<Technology> getByName(String name) {
+		List<Technology> technologies=technologyDao.findByName(name);
+		return technologies;
 	}
 
+	@Override
+	public List<Technology> getByTypeAndNameAndAlias(String type,String name,String alias) {
+		List<Technology> technologies=technologyDao.findByTypeAndNameAndAlias(type,name,alias);
+		return technologies;
+	}
+	
 }

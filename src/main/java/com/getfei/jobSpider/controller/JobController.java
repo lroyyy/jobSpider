@@ -29,11 +29,11 @@ public class JobController extends BaseController {
 
 	@GetMapping()
 	public ResponseResult<AnalysisResult> list(@RequestParam("keyword") String keyword,
-			@RequestParam("position") String positionName) {
+			@RequestParam("position") String position) {
 		FetchedResult fetchResult;
 		AnalysisResult result = null;
 		try {
-			fetchResult = webFetcherService.fetchJobs(keyword,positionName);
+			fetchResult = webFetcherService.fetchJobs(keyword,position);
 			if(fetchResult==null) {
 				logger.debug("fetchResult=null");
 			}

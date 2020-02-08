@@ -16,21 +16,27 @@ public class PositionDaoImpl implements IPositionDao{
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
+	private String collectionName="position";
 	
 	@Override
 	public void save(Position position) {
-		mongoTemplate.save(position,"position");
+		mongoTemplate.save(position,collectionName);
 	}
 
 	@Override
 	public List<Position> findAll() {
-		List<Position> positions=mongoTemplate.findAll(Position.class,"position");
+		List<Position> positions=mongoTemplate.findAll(Position.class,collectionName);
 		return positions;
 	}
 
 	@Override
-	public Position findOne(String positionName) {
-		return mongoTemplate.findOne(Query.query(Criteria.where("name").is(positionName)), Position.class,"position");
+	public Position findByName(String name) {
+		return mongoTemplate.findOne(Query.query(Criteria.where("name").is(name)), Position.class,collectionName);
 	}
 	
+	@Override
+	public Position findByCode(String code) {
+		return mongoTemplate.findOne(Query.query(Criteria.where("code").is(code)), Position.class,collectionName);
+	}
+
 }

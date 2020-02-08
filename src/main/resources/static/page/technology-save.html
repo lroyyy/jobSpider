@@ -7,9 +7,11 @@
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">类别</label>
+                            <label class="layui-form-label">类型</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="type" autocomplete="off" class="layui-input">
+                                <select id="type" name="type" lay-filter="type">
+                                    <option value="">请选择</option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -21,7 +23,7 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">别名</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="aliases" autocomplete="off" class="layui-input">
+                                <input type="text" name="alias" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -51,11 +53,15 @@
             table = layui.table;
 
         /**展示技术栈*/
-        const showTechnologies = function (typeName) {
+        const showTechnologies = function (type, name) {
             let url = '/technologies';
-            if (typeName != undefined) {
-                url += "?typeName=" + typeName;
+            if (type != undefined) {
+                url += "?type=" + type;
             }
+            if (name != undefined) {
+                url += "&name=" + name;
+            }
+            console.log("url=" + url);
             table.render({
                 elem: '#currentTableId',
                 url: url,
@@ -72,14 +78,35 @@
                     { field: 'name', width: 150, title: '名称' },
                     { field: 'aliases', width: 300, title: '别名', sort: true },
                     { title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center" }
-                ]],
-                limits: [10, 15, 20, 25, 50, 100],
-                limit: 15,
-                page: true
+                ]]
+                // ,limits: [10, 15, 20, 25, 50, 100],
+                // limit: 15,
+                // page: true
             });
         }
 
         showTechnologies();
+
+        /**初始化类型下拉框*/
+        const initTypes = function () {
+            $.ajax({
+                type: "get",
+                url: "/technologies/types",
+                dataType: "json",
+                success: function (response) {
+                    console.log("技术类型获取成功。");
+                    response.data.forEach(type => {
+                        $("#type").append(new Option(type,type));
+                    });
+                    layui.form.render("select");
+                },
+                error: function (response) {
+                    console.log("技术类型获取失败。");
+                }
+            });
+        }
+
+        initTypes();
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
@@ -96,6 +123,8 @@
                 , where: {
                     // searchParams: result
                     type: data.field.type
+                    , name: data.field.name
+                    , name: data.field.alias
                 }
             }, 'data');
 

@@ -31,8 +31,8 @@ $(function () {
             return;
         }
     	$.ajax({
-    		type: "get",
-    		url: "/position/",
+    		type: "post",
+    		url: "/positions/fetch",
     		dataType: "json",
     		success: function (response) {
     			console.log(JSON.stringify(response));

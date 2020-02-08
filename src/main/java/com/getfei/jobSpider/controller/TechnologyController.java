@@ -22,10 +22,14 @@ public class TechnologyController extends BaseController {
 	private ITechnologyService technologyService;
 
 	@GetMapping()
-	public ResponseResult<List<Technology>> get(@RequestParam(value = "type", required = false) String type) {
+	public ResponseResult<List<Technology>> get(@RequestParam(value = "type", required = false) String type,
+			@RequestParam(value = "name", required = false) String name,
+			@RequestParam(value = "alias", required = false) String alias) {
 		List<Technology> technologies;
-		technologies=type==null||"".equals(type)?technologyService.list():technologyService.getByType(type);
+		technologies = type == null && name == null && alias == null ? technologyService.list()
+				: technologyService.getByTypeAndNameAndAlias(type, name,alias);
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(SUCCESS, technologies);
+		rs.setDataCount(technologies.size());
 		return rs;
 	}
 
@@ -36,11 +40,11 @@ public class TechnologyController extends BaseController {
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(SUCCESS);
 		return rs;
 	}
-	
+
 	@GetMapping("/types")
 	public ResponseResult<List<String>> listType() {
-		List<String> types=technologyService.ListType();
-		ResponseResult<List<String>> rs = new ResponseResult<>(SUCCESS,types);
+		List<String> types = technologyService.ListType();
+		ResponseResult<List<String>> rs = new ResponseResult<>(SUCCESS, types);
 		return rs;
 	}
 

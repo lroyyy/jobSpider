@@ -52,7 +52,7 @@ public class TestAnalyzerService implements IAnalyzerService {
 			String salary=job.getSalary();
 			String companyName=job.getCompanyName();
 			String jobMessage = job.getJobMessage();
-			logger.info("开始分析：url="+url+",职位="+jobTitle+",薪水="+salary+",公司名称="+companyName);
+//			logger.info("开始分析：url="+url+",职位="+jobTitle+",薪水="+salary+",公司名称="+companyName);
 //			logger.info("信息："+jobMessage);
 			// 遍历technologyMapping，找出匹配的technology
 			Technologies.technologyMapping.forEach((key, technology) -> {

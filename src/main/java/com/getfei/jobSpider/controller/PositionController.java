@@ -39,7 +39,17 @@ public class PositionController extends BaseController{
 	}
 	
 	@GetMapping("/byname")
-	public ResponseResult<Position> get(@RequestParam("name") String positionName) throws Exception {
+	public ResponseResult<Position> getByName(@RequestParam("name") String positionName) throws Exception {
 		return new ResponseResult<>(SUCCESS,positionService.getByName(positionName));
+	}
+	
+	@GetMapping("/bycode")
+	public ResponseResult<Position> getByCode(@RequestParam("code") String code) throws Exception {
+		return new ResponseResult<>(SUCCESS,positionService.getByCode(code));
+	}
+	
+	@GetMapping("/structured")
+	public ResponseResult<List<Position>> listStructured() {
+		return new ResponseResult<>(SUCCESS,positionService.listStructured());
 	}
 }

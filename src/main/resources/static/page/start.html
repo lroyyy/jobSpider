@@ -17,42 +17,29 @@
                         autocomplete="off" class="layui-input">
                 </div>
             </div>
-            <div class="layui-form-item">
+            <!-- <div class="layui-form-item">
                 <label class="layui-form-label">位置</label>
                 <div class="layui-input-block">
                     <input type="text" name="position" lay-verify="required" lay-reqtext="位置是必填项哦。" placeholder="请输入关键字"
                         autocomplete="off" class="layui-input">
                 </div>
-            </div>
-            <!-- <div class="layui-form-item">
-                <label class="layui-form-label">地区</label>
+            </div> -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">位置</label>
                 <div class="layui-input-inline">
-                    <select name="province">
+                    <select id="province" name="province" lay-filter="province">
                         <option value="">请选择省或直辖市</option>
-                        <option value="浙江" selected="">浙江省</option>
-                        <option value="你的工号">江西省</option>
-                        <option value="你最喜欢的老师">福建省</option>
                     </select>
                 </div>
                 <div class="layui-input-inline">
-                    <select name="city">
-                        <option value="">请选择市</option>
-                        <option value="杭州">杭州</option>
-                        <option value="宁波" disabled="">宁波</option>
-                        <option value="温州">温州</option>
-                        <option value="温州">台州</option>
-                        <option value="温州">绍兴</option>
+                    <select id="city" name="city">
+                        <option value="">请选择地级市</option>
                     </select>
                 </div>
-            </div> -->
-            <!-- <div class="layui-form-item">
-                <label class="layui-form-label">名字</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="name" lay-verify="name" autocomplete="off" placeholder="请输入名字"
-                        class="layui-input">
-                </div>
-                <div class="layui-form-mid layui-word-aux">选填</div>
-            </div> -->
+                <!-- <div class="layui-input-inline">
+                    <button class="layui-btn" type=button id="auto-gain-position">自动获取位置</button>
+                </div> -->
+            </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
                     <button class="layui-btn" lay-submit="" lay-filter="demo1">开始爬取</button>
@@ -64,6 +51,7 @@
     </div>
 </div>
 <script src="js/lay-module/echarts/macarons.js" charset="utf-8"></script>
+<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
 <script>
     layui.use(['form', 'layedit', 'laydate', 'jquery', 'echarts'], function () {
         var form = layui.form
@@ -72,7 +60,8 @@
             , laydate = layui.laydate
             , echarts = layui.echarts
             , $ = layui.$;
-        var loader = {
+        let provinces = [];
+        var loader = {//读取遮罩
             ui: null,
             show: function () {
                 this.ui = layer.load(3, { shade: [0.6, '#def'] });
@@ -81,26 +70,76 @@
                 layer.close(this.ui);
             }
         };
-        // var loading = function () {
-        //     layerLoading = layer.load(3, { shade: [0.6, '#def'] });
-        // };
         /**
          * 初始化表单，要加上，不然刷新部分组件可能会不加载
          */
         form.render();
 
+        /**初始化位置*/
+        const initPositions = function () {
+            $.ajax({
+                type: "get",
+                url: "/positions/structured",
+                dataType: "json",
+                success: function (response) {
+                    provinces = response.data;
+                    // console.log(JSON.stringify(provinces));
+                    // console.log(province.length);
+                    provinces.forEach(province => {
+                        // console.log(province.name);
+                        $("#province").append(new Option(province.name, province.code));
+                    });
+                    form.render("select");
+                }
+            });
+        }
+
+        initPositions();
+
+        //监听“自动获取位置”按钮
+        // $("#auto-gain-position").on("click", function () {
+        //     const ip=returnCitySN['cip'];
+        //     // alert("IP地址是：" + returnCitySN['cip'] + "    " + "城市名字：" + returnCitySN['cname']);
+        //     var url = "http://ip.taobao.com/service/getIpInfo.php?ip=" + ip;
+        //     $.getJSON(url, function (json) {
+        //         var myprovince2 = json.data.area;
+        //         var mycity2 = json.data.region;
+        //         alert("您所在的城市是：" + myprovince2 + mycity2);
+        //     });
+        // });
+
+        /**省联动市*/
+        form.on("select(province)", function (data) {
+            const province = data.value;
+            provinces.forEach(p => {
+                if (p.code == province) {
+                    $("#city").empty();
+                    $("#city").append(new Option("请选择地级市", ""));
+                    p.positions.forEach(city => {
+                        $("#city").append(new Option(city.name, city.code));
+                    });
+                }
+            });
+            form.render("select");
+        });
+
         //监听提交
         form.on('submit(demo1)', function (data) {
             loader.show();
-            // loading();
             // layer.alert(JSON.stringify(data.field), {
             //     title: '最终的提交信息'
             // })
-            // const province = data.field.province;
-            // const city = data.field.city;
-            const position = data.field.position;
+            const province = data.field.province;
+            const city = data.field.city;
+            let position;
+            if (province != null && city != null) {
+                position = city;
+            } else if (province != null && city == null) {
+                position = province;
+            }
             const keyword = data.field.keyword;
             console.log(JSON.stringify(data.field));
+            //提交
             $.ajax({
                 type: "get",
                 url: "/job",
@@ -114,6 +153,9 @@
                     } else {
                         layer.alert(response.message);
                     }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState + "；HTTP状态码：" + jqXHR.status + "；状态码错误信息：" + jqXHR.statusText + "；状态：" + textStatus);
                 }
             });
             return false;
@@ -127,6 +169,14 @@
             });
             var chart = echarts.init(document.getElementById('div-chart'), "macarons");
             option = {
+                title: {
+                    text: '技术栈饼图',
+                    left: 'center',
+                    // top: 20,
+                    // textStyle: {
+                    //     color: '#ccc'
+                    // }
+                },
                 tooltip: {
                     trigger: 'item',
                     formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -136,6 +186,15 @@
                     x: 'left',
                     type: 'scroll',
                     data: legendData
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        // mark: { show: true },
+                        dataView: { show: true, readOnly: true },
+                        restore: { show: true },
+                        saveAsImage: { show: true }
+                    }
                 },
                 series: [
                     //内圈
