@@ -19,6 +19,7 @@ public abstract class BaseController {
 	 * 表示响应成功,用户的操作是正确的
 	 */
 	public static final Integer SUCCESS=200;
+	public static final Integer ERROR=300;
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@ExceptionHandler(ServiceException.class)

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.getfei.jobSpider.entity.AnalysisResult;
 import com.getfei.jobSpider.entity.FetchedResult;
 import com.getfei.jobSpider.entity.TechnologyType;
+import com.getfei.jobSpider.service.IAnalysisResultService;
 import com.getfei.jobSpider.service.IAnalyzerService;
 import com.getfei.jobSpider.service.IFetcherService;
 import com.getfei.jobSpider.util.ResponseResult;
@@ -26,26 +27,40 @@ public class JobController extends BaseController {
 	private IFetcherService webFetcherService;
 	@Autowired
 	private IAnalyzerService analyzerService;
+	@Autowired
+	private IAnalysisResultService analysisResultService;
 
 	@GetMapping()
 	public ResponseResult<AnalysisResult> list(@RequestParam("keyword") String keyword,
 			@RequestParam("position") String position) {
-		FetchedResult fetchResult;
-		AnalysisResult result = null;
+		AnalysisResult analysisResult = null;
+		ResponseResult<AnalysisResult> rr = new ResponseResult<>();
 		try {
-			fetchResult = webFetcherService.fetchJobs(keyword,position);
-			if(fetchResult==null) {
-				logger.debug("fetchResult=null");
+			// 在mongodb里查看历史查询
+			AnalysisResult historicalAnalysisResult = analysisResultService.getByKeywordAndPosition(keyword, position);
+			if (historicalAnalysisResult != null) {
+				analysisResult = historicalAnalysisResult;
+				rr.setMessage("返回历史分析。");
+			} else {
+				//爬取
+				FetchedResult fetchResult = webFetcherService.fetchJobs(keyword, position);
+				if (fetchResult == null) {
+					logger.debug("fetchResult=null");
+				}
+				//分析
+				analysisResult = analyzerService.analyse(fetchResult);
+				//分析结果存入数据库
+				analysisResultService.insert(analysisResult);
+				rr.setMessage("一次全新的分析！");
 			}
-			if(fetchResult.getJobs()==null) {
-				logger.info("fetchResult.getJobs=null");
-			}
-			result = analyzerService.analyse(fetchResult);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			rr.setMessage(e.getMessage());
+			rr.setState(ERROR);
+			return rr;
 		}
-		return new ResponseResult<>(SUCCESS, result);
+		rr.setState(SUCCESS);
+		rr.setData(analysisResult);
+		return rr;
 	}
 
 	@GetMapping("test1")

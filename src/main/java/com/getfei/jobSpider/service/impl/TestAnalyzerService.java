@@ -3,6 +3,7 @@ package com.getfei.jobSpider.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -113,9 +114,12 @@ public class TestAnalyzerService implements IAnalyzerService {
 		sortedTechnologyTypeCounter.forEach((key, value) -> {
 			technologyTypeCounterEchartsData.add(new EchartsData(key, String.valueOf(value)));
 		});
-		// 输出
+		// 构造AnalysisResult对象
 		AnalysisResult analysisResult = new AnalysisResult();
-		analysisResult.setFetchResult(fetchedResult);
+//		analysisResult.setFetchResult(fetchedResult);
+		analysisResult.setDate(new Date());
+		analysisResult.setKeyword(fetchedResult.getKeyword());
+		analysisResult.setPosition(fetchedResult.getPosition());
 		analysisResult.setTechnologyCounter(technologyCounterEchartsData);
 		analysisResult.setTechnologyTypeCounter(technologyTypeCounterEchartsData);
 		logger.info("爬取Job总数：" + fetchedResult.getTotal());

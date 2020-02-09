@@ -96,6 +96,8 @@ public class FetcherServiceImpl implements IFetcherService {
 		}
 		//将爬取的工作和爬取成功失败数注入fetchedResult对象
 		result.setJobs(jobs);
+		result.setKeyword(keyword);
+		result.setPosition(positionCode);
 		result.setSuccessCount(jobs.size());
 		result.setTotal(result.getFailureCount() + result.getSuccessCount());
 		return result;

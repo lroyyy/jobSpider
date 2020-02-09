@@ -50,8 +50,7 @@
         <div id="div-chart"></div>
     </div>
 </div>
-<script src="js/lay-module/echarts/macarons.js" charset="utf-8"></script>
-<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+<!-- <script src="js/lay-module/echarts/macarons.js" charset="utf-8"></script> -->
 <script>
     layui.use(['form', 'layedit', 'laydate', 'jquery', 'echarts'], function () {
         var form = layui.form
@@ -150,11 +149,11 @@
                         $("#div-chart").show();
                         initPie(response.data);
                         loader.close();
-                    } else {
-                        layer.alert(response.message);
                     }
+                    layer.alert(response.message);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
+                	loader.close();
                     layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState + "；HTTP状态码：" + jqXHR.status + "；状态码错误信息：" + jqXHR.statusText + "；状态：" + textStatus);
                 }
             });
@@ -167,7 +166,7 @@
             data.technologyCounter.forEach(e => {
                 legendData.push(e.name);
             });
-            var chart = echarts.init(document.getElementById('div-chart'), "macarons");
+            var chart = echarts.init(document.getElementById('div-chart'), "walden");
             option = {
                 title: {
                     text: '技术栈饼图',
