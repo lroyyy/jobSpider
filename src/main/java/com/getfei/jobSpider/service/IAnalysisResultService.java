@@ -7,5 +7,7 @@ public interface IAnalysisResultService {
 	void insert(AnalysisResult analysisResult);
 	
 	AnalysisResult getByKeywordAndPosition(String keyword, String position);
+
+	void delete(AnalysisResult analysisResult);
 	
 }

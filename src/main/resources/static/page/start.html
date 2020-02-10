@@ -48,16 +48,19 @@
             </div>
         </form>
         <div id="div-chart"></div>
+        <div id="div-wordcloud"></div>
     </div>
 </div>
-<!-- <script src="js/lay-module/echarts/macarons.js" charset="utf-8"></script> -->
+<script src="lib/echarts/echarts.js" charset="utf-8"></script>
+<script src="lib/echarts/echarts-wordcloud.js" charset="utf-8"></script>
+<script src="lib/echarts/macarons.js" charset="utf-8"></script>
 <script>
-    layui.use(['form', 'layedit', 'laydate', 'jquery', 'echarts'], function () {
+    layui.use(['form', 'layedit', 'laydate', 'jquery'], function () {
         var form = layui.form
             , layer = layui.layer
             , layedit = layui.layedit
             , laydate = layui.laydate
-            , echarts = layui.echarts
+            // , echarts = layui.echarts
             , $ = layui.$;
         let provinces = [];
         var loader = {//读取遮罩
@@ -122,12 +125,42 @@
             form.render("select");
         });
 
+        /**展示结果*/
+        const showResult = function (data) {
+            //显示图标
+            $("#div-chart").show();
+            initPie(data);
+            //显示词云
+            $("#div-wordcloud").show();
+            initWordCloud(data);
+        }
+
+        /**展示全新结果*/
+        const getAndShowNewResult = function (keyword,position) {
+            $.ajax({
+                type: "get",
+                url: "/job",
+                data: "keyword=" + keyword + "&position=" + position + "&way=getNew",
+                dataType: "json",
+                success: function (response) {
+                    if (response.state == 200) {//返回有效结果
+                        showResult(response.data);
+                        loader.close();
+                    } else {
+                        loader.close();
+                        layer.alert(response.message);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    loader.close();
+                    layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState + "；HTTP状态码：" + jqXHR.status + "；状态码错误信息：" + jqXHR.statusText + "；状态：" + textStatus);
+                }
+            });
+        }
         //监听提交
         form.on('submit(demo1)', function (data) {
             loader.show();
-            // layer.alert(JSON.stringify(data.field), {
-            //     title: '最终的提交信息'
-            // })
+            //处理参数
             const province = data.field.province;
             const city = data.field.city;
             let position;
@@ -145,28 +178,45 @@
                 data: "keyword=" + keyword + "&position=" + position,
                 dataType: "json",
                 success: function (response) {
-                    if (response.state == 200) {
-                        $("#div-chart").show();
-                        initPie(response.data);
-                        loader.close();
+                    console.log("state="+response.state);
+                    if (response.state == 200) {//返回有效结果
+                        console.log("response.data.ifNew=" + response.data.ifNew);
+                        if (response.data.ifNew) {//第一次查询
+                            getAndShowNewResult(keyword,position);
+                        } else {
+                            const msg = "某个小伙伴在" + response.data.date + "做过相同条件的分析，点击【确定】直接返回上次的结果，点击【取消】分析最新的数据。";
+                            const confirmer = layer.confirm(msg, { icon: 3, title: '提示' }, function (index) {
+                                layer.close(index);
+                                loader.show();
+                                //返回历史结果
+                                showResult(response.data);
+                                loader.close();
+                            }, function (index) {
+                                //返回全新结果
+                                layer.close(index);
+                                loader.show();
+                                getAndShowNewResult(keyword,position);
+                            });
+                        }
+                    } else {
+                        layer.alert(response.message);
                     }
-                    layer.alert(response.message);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                	loader.close();
+                    loader.close();
                     layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState + "；HTTP状态码：" + jqXHR.status + "；状态码错误信息：" + jqXHR.statusText + "；状态：" + textStatus);
                 }
             });
             return false;
         });
 
-        /**饼图*/
+        /**初始化饼图*/
         const initPie = function (data) {
-            var legendData = [];
+            var legendData = [];//图例数据
             data.technologyCounter.forEach(e => {
                 legendData.push(e.name);
             });
-            var chart = echarts.init(document.getElementById('div-chart'), "walden");
+            var chart = echarts.init(document.getElementById('div-chart'), "macarons");
             option = {
                 title: {
                     text: '技术栈饼图',
@@ -176,6 +226,7 @@
                     //     color: '#ccc'
                     // }
                 },
+                backgroundColor: '#F7F7F7',
                 tooltip: {
                     trigger: 'item',
                     formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -274,7 +325,54 @@
                 ]
             };
             chart.setOption(option);
+        }
 
+        /**初始化词云*/
+        const initWordCloud = function (data) {
+            var chart = echarts.init(document.getElementById('div-wordcloud'), "macarons");
+            option = {
+                title: {
+                    text: '技术栈词云',//标题
+                    x: 'center',
+                    textStyle: {
+                        fontSize: 23
+                    }
+                },
+                backgroundColor: '#F7F7F7',
+                tooltip: {
+                    show: true
+                },
+                series: [{
+                    name: '技术热度分析',//数据提示窗标题
+                    type: 'wordCloud',
+                    sizeRange: [12, 120],//画布范围，如果设置太大会出现少词（溢出屏幕）
+                    rotationRange: [-45, 90],//数据翻转范围
+                    //shape: 'circle',
+                    textPadding: 10,
+                    drawOutOfBound: false,
+                    autoSize: {
+                        enable: true,
+                        minSize: 20
+                    },
+                    textStyle: {
+                        normal: {
+                            color: function () {
+                                return 'rgb(' + [
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160)
+                                ].join(',') + ')';
+                            }
+                        },
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
+                    },
+                    data: data.technologyCounter //name和value建议用小写，大写有时会出现兼容问题
+                }]
+            };
+            chart.setOption(option);
         }
         //表单初始赋值
         form.val('example', {
@@ -290,5 +388,11 @@
         display: none;
         width: auto;
         height: 40vw;
+    }
+
+    #div-wordcloud {
+        display: none;
+        width: auto;
+        height: 35vw;
     }
 </style>

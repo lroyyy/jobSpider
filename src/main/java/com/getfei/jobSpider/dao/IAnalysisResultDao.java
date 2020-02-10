@@ -10,4 +10,7 @@ public interface IAnalysisResultDao {
 	/**根据关键字和位置查询*/
 	AnalysisResult findByKeywordAndPosition(String keyword,String position);
 
+	/**删除*/
+	void delete(AnalysisResult analysisResult);
+	
 }

@@ -23,4 +23,9 @@ public class AnalysisResultServiceImpl implements IAnalysisResultService{
 		return analysisResultDao.findByKeywordAndPosition(keyword, position);
 	}
 
+	@Override
+	public void delete(AnalysisResult analysisResult) {
+		analysisResultDao.delete(analysisResult);
+	}
+
 }

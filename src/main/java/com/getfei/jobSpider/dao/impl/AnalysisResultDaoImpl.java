@@ -31,4 +31,9 @@ public class AnalysisResultDaoImpl implements IAnalysisResultDao{
 		return mongoTemplate.findOne(Query.query(criatira),AnalysisResult.class, collectionName);
 	}
 
+	@Override
+	public void delete(AnalysisResult analysisResult) {
+		mongoTemplate.remove(analysisResult,collectionName);
+	}
+
 }
