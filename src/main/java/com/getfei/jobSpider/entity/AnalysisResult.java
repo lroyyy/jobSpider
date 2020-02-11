@@ -38,9 +38,6 @@ public class AnalysisResult extends BaseEntity{
 	@Transient
 	private boolean ifNew=true;
 	
-	@Transient
-	private String testGit;
-	
 	private List<EchartsData> technologyCounter;
 	private List<EchartsData> technologyTypeCounter;
 	

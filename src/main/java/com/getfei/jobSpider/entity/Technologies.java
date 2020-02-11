@@ -31,6 +31,7 @@ public class Technologies {
 		buildFromMongoDB();
 	}
 
+	/**构造自MongoDB*/
 	public void buildFromMongoDB() {
 		List<Technology> list = technologyDao.findAll();
 		logger.info("list="+list);
