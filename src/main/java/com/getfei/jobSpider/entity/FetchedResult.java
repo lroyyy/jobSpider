@@ -5,6 +5,12 @@ import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * 爬取的结果
+ * 
+ * @author lroy
+ *
+ */
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class FetchedResult extends BaseEntity{
@@ -22,7 +28,13 @@ public class FetchedResult extends BaseEntity{
 	
 	/** 工作集 */
 	private List<Job> jobs;
-
+	
+	/**关键字*/
+	private String keyword;
+	
+	/**位置*/
+	private String position;
+	
 	public void totalIncrease1() {
 		total++;
 	}

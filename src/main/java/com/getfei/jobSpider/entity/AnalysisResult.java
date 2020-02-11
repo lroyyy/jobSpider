@@ -1,23 +1,47 @@
 package com.getfei.jobSpider.entity;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 分析的结果
+ * 
+ * @author lroy
+ * @see FetchedResult
+ *
+ */
 @Getter
 @Setter
 public class AnalysisResult extends BaseEntity{
 
 	private static final long serialVersionUID = -2205698762127429568L;
 	
-	private FetchedResult fetchResult;
+	@Id
+	private String id;
+	
+	/**关键字*/
+	private String keyword;
+	
+	/**位置*/
+	private String position;
+	
+	/**分析日期*/
+	private Date date;
+	
+	/**是否是全新的*/
+	@Transient
+	private boolean ifNew=true;
+	
+	@Transient
+	private String testGit;
+	
 	private List<EchartsData> technologyCounter;
 	private List<EchartsData> technologyTypeCounter;
-//	private Map<Technology,Integer> technologyCounter;
-//	private Map<TechnologyType,Integer> technologyTypeCounter;
 	
 }

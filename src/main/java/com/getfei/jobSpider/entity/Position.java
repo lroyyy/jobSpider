@@ -1,5 +1,8 @@
 package com.getfei.jobSpider.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -17,9 +20,15 @@ public class Position extends BaseEntity{
 	
 	private String code;
 	
+	private List<Position> positions=new ArrayList<>();
+	
 	public Position(String name,String code) {
 		this.name=name;
 		this.code=code;
+	}
+	
+	public void addPosition(Position position) {
+		positions.add(position);
 	}
 	
 }

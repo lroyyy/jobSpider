@@ -24,10 +24,6 @@ public class Technologies {
 	@Autowired
 	private ITechnologyDao technologyDao;
 
-//	static {
-//		initTechnologies();
-//	}
-
 	@PostConstruct
 	public void init() {
 		technologyMapping = new HashMap<>();

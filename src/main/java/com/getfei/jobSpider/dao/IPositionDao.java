@@ -10,6 +10,8 @@ public interface IPositionDao {
 	
 	List<Position> findAll();
 	
-	Position findOne(String positionName);
+	Position findByName(String name);
+	
+	Position findByCode(String code);
 	
 }
