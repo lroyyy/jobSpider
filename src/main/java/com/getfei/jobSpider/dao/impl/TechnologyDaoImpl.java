@@ -55,14 +55,21 @@ public class TechnologyDaoImpl implements ITechnologyDao {
 	
 	@Override
 	public List<Technology> findByType(String type) {
-		List<Technology> technologies = mongoTemplate.find(Query.query(Criteria.where("type").is(type)),
+		List<Technology> technologies = mongoTemplate.find(Query.query(Criteria.where("type").regex("^"+type+"$","i")),
+				Technology.class, collectionName);
+		return technologies;
+	}
+	
+	@Override
+	public List<Technology> findByName(String name) {
+		List<Technology> technologies = mongoTemplate.find(Query.query(Criteria.where("name").regex("^"+name+"$","i")),
 				Technology.class, collectionName);
 		return technologies;
 	}
 
 	@Override
-	public List<Technology> findByName(String name) {
-		//模糊匹配
+	public List<Technology> findByNameLike(String name) {
+		//模糊匹配，不区分大小写
 		Pattern pattern = Pattern.compile("^.*"+name+".*$", Pattern.CASE_INSENSITIVE);
 		List<Technology> technologies = mongoTemplate.find(Query.query(Criteria.where("name").regex(pattern)),
 				Technology.class, collectionName);
@@ -70,21 +77,34 @@ public class TechnologyDaoImpl implements ITechnologyDao {
 	}
 
 	@Override
-	public List<Technology> findByTypeAndNameAndAlias(String type, String name,String alias) {
+	public List<Technology> findByTypeAndNameLikeAndAliasLike(String type, String name,String alias) {
 		logger.info("type="+type+",name="+name+",alias="+alias);
 		Criteria criatira = new Criteria();
 		//筛选type
-		Criteria typeCriatira="".equals(type)?new Criteria():Criteria.where("type").is(type);		
+		Criteria typeCriatira=type==null||"".equals(type)?new Criteria():Criteria.where("type").is(type);		
 		//筛选name
-		Pattern namePattern = Pattern.compile("^.*"+name+".*$", Pattern.CASE_INSENSITIVE);
-		Criteria nameCriatira="".equals(name)?new Criteria():Criteria.where("name").regex(namePattern);
+//		Pattern namePattern = Pattern.compile("^.*"+name+".*$", Pattern.CASE_INSENSITIVE);
+		Criteria nameCriatira=name==null||"".equals(name)?new Criteria():Criteria.where("name").regex("^.*"+name+".*$","i");
 		//筛选alias
-		Pattern aliasPattern = Pattern.compile("^.*"+alias+".*$", Pattern.CASE_INSENSITIVE);
-		Criteria aliasCriatira="".equals(alias)?new Criteria():Criteria.where("aliases").regex(aliasPattern);
+//		Pattern aliasPattern = Pattern.compile("^.*"+alias+".*$", Pattern.CASE_INSENSITIVE);
+		Criteria aliasCriatira=alias==null||"".equals(alias)?new Criteria():Criteria.where("aliases").regex("^.*"+alias+".*$","i");
 		//并联多条件
 		criatira.andOperator(typeCriatira,nameCriatira,aliasCriatira);
 		List<Technology> technologies = mongoTemplate.find(Query.query(criatira),Technology.class, collectionName);
 		return technologies;
+	}
+
+	@Override
+	public List<Technology> findByTypeAndName(String type, String name) {
+		Criteria criatira = new Criteria();
+		criatira.andOperator(Criteria.where("type").regex(type,"i"),Criteria.where("name").regex(name,"i"));
+		List<Technology> technologies = mongoTemplate.find(Query.query(criatira),Technology.class, collectionName);
+		return technologies;
+	}
+
+	@Override
+	public List<Technology> findByAlias(String alias) {
+		return mongoTemplate.find(Query.query(Criteria.where("aliases").regex("^"+alias+"$","i")),Technology.class, collectionName);
 	}
 
 }

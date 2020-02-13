@@ -1,5 +1,7 @@
 package com.getfei.jobSpider.entity;
 
+import java.util.Arrays;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -16,15 +18,6 @@ public class Technology {
 		this.type = type;
 		this.aliases = aliases;
 	}
-	// public Technology(String name,TechnologyType type) {
-	// this.name=name;
-	// this.type=type;
-	// }
-	// public Technology(String name,TechnologyType type,String[] aliases) {
-	// this.name=name;
-	// this.type=type;
-	// this.aliases=aliases;
-	// }
 
 	@Override
 	public int hashCode() {
@@ -56,6 +49,6 @@ public class Technology {
 
 	@Override
 	public String toString() {
-		return "技术 [类型=" + type + ", 名称=" + name + "]";
+		return "技术 [类型=" + type + ", 名称=" + name + ", 别名="+Arrays.toString(aliases)+"]";
 	}
 }

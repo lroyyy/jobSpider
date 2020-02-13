@@ -14,19 +14,25 @@
   },
   "menuInfo": {
     "currency": {
-      "title": "常规管理",
+      "title": "求职助手",
       "icon": "fa fa-address-book",
       "child": [
         {
           "title": "开始",
           "href": "page/start.html",
-          "icon": "fa fa-oggle-right",
+          "icon": "fa fa-pie-chart",
           "target": "_self"
         },
         {
-          "title": "新增技术栈",
-          "href": "page/technology-save.html",
-          "icon": "fa fa-window-maximize",
+          "title": "技术栈",
+          "href": "page/technology.html",
+          "icon": "fa fa-stack-overflow",
+          "target": "_self"
+        },
+        {
+          "title": "图标选择",
+          "href": "page/demo/icon.html",
+          "icon": "fa fa-adn",
           "target": "_self"
         }
       ]

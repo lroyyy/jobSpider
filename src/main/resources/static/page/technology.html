@@ -1,15 +1,46 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
-
-        <fieldset class="layui-elem-field layuimini-search">
-            <legend>搜索信息</legend>
+        <fieldset class="layui-elem-field">
+            <legend>新增</legend>
             <div style="margin: 10px 10px 10px 10px">
-                <form class="layui-form layui-form-pane" action="">
+                <form class="layui-form layui-form-pane" lay-filter="add" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
                             <label class="layui-form-label">类型</label>
                             <div class="layui-input-inline">
-                                <select id="type" name="type" lay-filter="type">
+                                <input type="text" id="type" name="type" lay-verify="required" lay-reqtext="类型必填项哦。"
+                                    autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" lay-verify="required" lay-reqtext="名称必填项哦。"
+                                    autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">别名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="alias" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <a class="layui-btn" lay-submit="" lay-filter="data-add-btn">新增</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+        <fieldset class="layui-elem-field layuimini-search">
+            <legend>搜索</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" lay-filter="search" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">类型</label>
+                            <div class="layui-input-inline">
+                                <select id="select-query-type" name="type" lay-filter="type">
                                     <option value="">请选择</option>
                                 </select>
                             </div>
@@ -33,11 +64,6 @@
                 </form>
             </div>
         </fieldset>
-
-        <div class="layui-btn-group">
-            <button class="layui-btn data-add-btn">添加</button>
-            <button class="layui-btn layui-btn-danger data-delete-btn">删除</button>
-        </div>
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
         <script type="text/html" id="currentTableBar">
             <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
@@ -96,7 +122,7 @@
                 success: function (response) {
                     console.log("技术类型获取成功。");
                     response.data.forEach(type => {
-                        $("#type").append(new Option(type,type));
+                        $("#select-query-type").append(new Option(type, type));
                     });
                     layui.form.render("select");
                 },
@@ -108,26 +134,57 @@
 
         initTypes();
 
-        // 监听搜索操作
-        form.on('submit(data-search-btn)', function (data) {
-            // var result = JSON.stringify(data.field);
-            // layer.alert(result, {
-            //     title: '最终的搜索信息'
-            // });
-
-            //执行搜索重载
+        /**重载表格*/
+        const reloadTable=function(data){
+            // const data=form.val("currentTableId");
+            console.log("before reloadTable,data="+JSON.stringify(data));
             table.reload('currentTableId', {
                 page: {
                     curr: 1
                 }
                 , where: {
-                    // searchParams: result
                     type: data.field.type
                     , name: data.field.name
-                    , name: data.field.alias
+                    , alias: data.field.alias
                 }
-            }, 'data');
+            });
+        }
 
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            //执行搜索重载
+            reloadTable(data);
+            // table.reload('currentTableId', {
+            //     page: {
+            //         curr: 1
+            //     }
+            //     , where: {
+            //         type: data.field.type
+            //         , name: data.field.name
+            //         , alias: data.field.alias
+            //     }
+            // }, 'data');
+            return false;
+        });
+
+        // 监听新增操作
+        form.on('submit(data-add-btn)', function (data) {
+            //执行搜索重载
+            $.ajax({
+                type: "post",
+                url: "/technologies/",
+                data: data.field,
+                dataType: "json",
+                success: function (response) {
+                    if (response.state == 200) {
+                        layer.alert('新增成功', { icon: 6 });
+                        // const data=form.val("search");
+                        // reloadTable(data);
+                    } else {
+                        layer.alert("新增失败，信息：" + response.message, { icon: 7 });
+                    }
+                }
+            });
             return false;
         });
 

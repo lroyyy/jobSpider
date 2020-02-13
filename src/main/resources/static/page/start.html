@@ -17,13 +17,6 @@
                         autocomplete="off" class="layui-input">
                 </div>
             </div>
-            <!-- <div class="layui-form-item">
-                <label class="layui-form-label">位置</label>
-                <div class="layui-input-block">
-                    <input type="text" name="position" lay-verify="required" lay-reqtext="位置是必填项哦。" placeholder="请输入关键字"
-                        autocomplete="off" class="layui-input">
-                </div>
-            </div> -->
             <div class="layui-form-item">
                 <label class="layui-form-label">位置</label>
                 <div class="layui-input-inline">
@@ -136,7 +129,7 @@
         }
 
         /**展示全新结果*/
-        const getAndShowNewResult = function (keyword,position) {
+        const getAndShowNewResult = function (keyword, position) {
             $.ajax({
                 type: "get",
                 url: "/job",
@@ -157,6 +150,14 @@
                 }
             });
         }
+
+        /**获取本地时间*/
+        const getLocalDate = function (v) {
+            const d = new Date(v || Date.now());
+            d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+            return d.toISOString();
+        }
+
         //监听提交
         form.on('submit(demo1)', function (data) {
             loader.show();
@@ -178,13 +179,14 @@
                 data: "keyword=" + keyword + "&position=" + position,
                 dataType: "json",
                 success: function (response) {
-                    console.log("state="+response.state);
+                    console.log("state=" + response.state);
                     if (response.state == 200) {//返回有效结果
                         console.log("response.data.ifNew=" + response.data.ifNew);
                         if (response.data.ifNew) {//第一次查询
-                            getAndShowNewResult(keyword,position);
+                            getAndShowNewResult(keyword, position);
                         } else {
-                            const msg = "某个小伙伴在" + response.data.date + "做过相同条件的分析，点击【确定】直接返回上次的结果，点击【取消】分析最新的数据。";
+                            loader.close();
+                            const msg = "某个小伙伴在" + getLocalDate(response.data.date) + "做过相同条件的分析，点击【确定】直接返回上次的结果，点击【取消】分析最新的数据，点击【×】取消本次查询。";
                             const confirmer = layer.confirm(msg, { icon: 3, title: '提示' }, function (index) {
                                 layer.close(index);
                                 loader.show();
@@ -195,7 +197,7 @@
                                 //返回全新结果
                                 layer.close(index);
                                 loader.show();
-                                getAndShowNewResult(keyword,position);
+                                getAndShowNewResult(keyword, position);
                             });
                         }
                     } else {
