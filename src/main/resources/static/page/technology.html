@@ -80,14 +80,14 @@
 
         /**展示技术栈*/
         const showTechnologies = function (type, name) {
-            let url = '/technologies';
+            let url = "/"+projectName+'/technologies';
             if (type != undefined) {
                 url += "?type=" + type;
             }
             if (name != undefined) {
                 url += "&name=" + name;
             }
-            console.log("url=" + url);
+            // console.log("url=" + url);
             table.render({
                 elem: '#currentTableId',
                 url: url,
@@ -101,7 +101,7 @@
                 cols: [[
                     { type: "checkbox", width: 50, fixed: "left" },
                     { field: 'type', width: 150, title: '类别', sort: true },
-                    { field: 'name', width: 150, title: '名称' },
+                    { field: 'name', width: 150, title: '名称' , sort: true},
                     { field: 'aliases', width: 300, title: '别名', sort: true },
                     { title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center" }
                 ]]
@@ -117,7 +117,7 @@
         const initTypes = function () {
             $.ajax({
                 type: "get",
-                url: "/technologies/types",
+                url: "/"+projectName+"/technologies/types",
                 dataType: "json",
                 success: function (response) {
                     console.log("技术类型获取成功。");
@@ -154,16 +154,6 @@
         form.on('submit(data-search-btn)', function (data) {
             //执行搜索重载
             reloadTable(data);
-            // table.reload('currentTableId', {
-            //     page: {
-            //         curr: 1
-            //     }
-            //     , where: {
-            //         type: data.field.type
-            //         , name: data.field.name
-            //         , alias: data.field.alias
-            //     }
-            // }, 'data');
             return false;
         });
 
@@ -172,14 +162,12 @@
             //执行搜索重载
             $.ajax({
                 type: "post",
-                url: "/technologies/",
+                url: "/"+projectName+"/technologies/",
                 data: data.field,
                 dataType: "json",
                 success: function (response) {
                     if (response.state == 200) {
                         layer.alert('新增成功', { icon: 6 });
-                        // const data=form.val("search");
-                        // reloadTable(data);
                     } else {
                         layer.alert("新增失败，信息：" + response.message, { icon: 7 });
                     }
@@ -193,7 +181,7 @@
             layer.msg('添加数据');
             $.ajax({
                 type: "post",
-                url: "/technology/",
+                url: "/"+projectName+"/technology/",
                 data: "data",
                 dataType: "json",
                 success: function (response) {
@@ -216,6 +204,7 @@
             console.log(obj)
         });
 
+        //操作区按钮
         table.on('tool(currentTableFilter)', function (obj) {
             var data = obj.data;
             if (obj.event === 'edit') {

@@ -36,4 +36,10 @@ public class AnalysisResultDaoImpl implements IAnalysisResultDao{
 		mongoTemplate.remove(analysisResult,collectionName);
 	}
 
+	@Override
+	public void truncate() {
+		mongoTemplate.dropCollection(collectionName);
+		mongoTemplate.createCollection(collectionName);
+	}
+
 }

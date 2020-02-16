@@ -13,4 +13,7 @@ public interface IAnalysisResultDao {
 	/**删除*/
 	void delete(AnalysisResult analysisResult);
 	
+	/**清空所有*/
+	void truncate();
+	
 }

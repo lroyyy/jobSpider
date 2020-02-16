@@ -1,5 +1,7 @@
 package com.getfei.jobSpider.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,11 @@ public class AnalysisResultServiceImpl implements IAnalysisResultService{
 	@Override
 	public void delete(AnalysisResult analysisResult) {
 		analysisResultDao.delete(analysisResult);
+	}
+
+	@Override
+	public void clear() {
+		analysisResultDao.truncate();
 	}
 
 }

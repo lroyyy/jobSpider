@@ -34,6 +34,9 @@ public class AnalysisResult extends BaseEntity{
 	/**分析日期*/
 	private Date date;
 	
+	/**总页数*/
+	private int totalPage;
+	
 	/**是否是全新的*/
 	@Transient
 	private boolean ifNew=true;

@@ -10,4 +10,6 @@ public interface IAnalysisResultService {
 
 	void delete(AnalysisResult analysisResult);
 	
+	void clear();
+	
 }

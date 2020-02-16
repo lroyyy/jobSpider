@@ -17,6 +17,7 @@ import com.getfei.jobSpider.entity.TechnologyType;
 import com.getfei.jobSpider.service.IAnalysisResultService;
 import com.getfei.jobSpider.service.IAnalyzerService;
 import com.getfei.jobSpider.service.IFetcherService;
+import com.getfei.jobSpider.service.ex.MongoDeleteException;
 import com.getfei.jobSpider.util.ResponseResult;
 
 @RestController
@@ -42,7 +43,7 @@ public class JobController extends BaseController {
 				logger.info("强制获取最新结果。");
 				analysisResult=getNew(keyword, position);
 				//删除旧结果
-				if(historicalAnalysisResult != null) {
+				if(historicalAnalysisResult.getTechnologyCounter()!=null) {
 					analysisResultService.delete(historicalAnalysisResult);
 				}
 			}else {//优先获取已有结果
@@ -66,13 +67,19 @@ public class JobController extends BaseController {
 		return rr;
 	}
 
-	/** 预览结果 */
-	private AnalysisResult preview(String keyword, String position) {
+	/** 预览结果 
+	 * @throws Exception */
+	private AnalysisResult preview(String keyword, String position) throws Exception {
 		// 在mongodb里查看历史查询
 		AnalysisResult analysisResult = analysisResultService.getByKeywordAndPosition(keyword, position);
 		if (analysisResult != null) {
 			// 已有历史结果
 			analysisResult.setIfNew(false);
+		}else {
+			//找不到历史结果
+			analysisResult=new AnalysisResult();
+			int totalPage=webFetcherService.getTotalPage(keyword, position);
+			analysisResult.setTotalPage(totalPage);//设置总数
 		}
 		return analysisResult;
 	}

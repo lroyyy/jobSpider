@@ -12,15 +12,17 @@
         <form class="layui-form" action="" lay-filter="example">
             <div class="layui-form-item">
                 <label class="layui-form-label">关键字</label>
-                <div class="layui-input-block">
-                    <input type="text" name="keyword" lay-verify="required" lay-reqtext="关键字是必填项哦。" placeholder="请输入关键字"
+                <div class="layui-input-inline">
+                    <input type="text" name="keyword" lay-verify="required" lay-reqtext="请输入关键字。" placeholder="请输入关键字"
                         autocomplete="off" class="layui-input">
                 </div>
+                <div class="layui-form-mid layui-word-aux">查询出的岗位名称必须含有该关键字</div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">位置</label>
                 <div class="layui-input-inline">
-                    <select id="province" name="province" lay-filter="province">
+                    <select id="province" name="province" lay-filter="province" lay-verify="required"
+                        lay-reqtext="请选择省。">
                         <option value="">请选择省或直辖市</option>
                     </select>
                 </div>
@@ -29,6 +31,7 @@
                         <option value="">请选择地级市</option>
                     </select>
                 </div>
+                <div class="layui-form-mid layui-word-aux">只选择省不选市表示全省</div>
                 <!-- <div class="layui-input-inline">
                     <button class="layui-btn" type=button id="auto-gain-position">自动获取位置</button>
                 </div> -->
@@ -65,16 +68,14 @@
                 layer.close(this.ui);
             }
         };
-        /**
-         * 初始化表单，要加上，不然刷新部分组件可能会不加载
-         */
+        //初始化表单，要加上，不然刷新部分组件可能会不加载
         form.render();
 
         /**初始化位置*/
         const initPositions = function () {
             $.ajax({
                 type: "get",
-                url: "/positions/structured",
+                url: "/" + projectName + "/positions/structured",
                 dataType: "json",
                 success: function (response) {
                     provinces = response.data;
@@ -88,7 +89,6 @@
                 }
             });
         }
-
         initPositions();
 
         //监听“自动获取位置”按钮
@@ -103,18 +103,28 @@
         //     });
         // });
 
+        /**直辖市或特区：北京 上海 深圳 天津 重庆*/
+        const provincelevelMunicipalityCode = ["010000", "020000", "040000", "050000", "060000"];
+
         /**省联动市*/
         form.on("select(province)", function (data) {
             const province = data.value;
-            provinces.forEach(p => {
-                if (p.code == province) {
-                    $("#city").empty();
-                    $("#city").append(new Option("请选择地级市", ""));
-                    p.positions.forEach(city => {
-                        $("#city").append(new Option(city.name, city.code));
-                    });
-                }
-            });
+            const restCity = function () {
+                $("#city").empty();
+                $("#city").append(new Option("请选择地级市", ""));
+            }
+            if (provincelevelMunicipalityCode.indexOf(province) != -1) { //直辖市不显示市
+                restCity();
+            } else {
+                provinces.forEach(p => {
+                    if (p.code == province) {
+                        restCity();
+                        p.positions.forEach(city => {
+                            $("#city").append(new Option(city.name, city.code));
+                        });
+                    }
+                });
+            }
             form.render("select");
         });
 
@@ -132,7 +142,7 @@
         const getAndShowNewResult = function (keyword, position) {
             $.ajax({
                 type: "get",
-                url: "/job",
+                url: "/" + projectName + "/job",
                 data: "keyword=" + keyword + "&position=" + position + "&way=getNew",
                 dataType: "json",
                 success: function (response) {
@@ -164,25 +174,22 @@
             //处理参数
             const province = data.field.province;
             const city = data.field.city;
-            let position;
-            if (province != null && city != null) {
-                position = city;
-            } else if (province != null && city == null) {
-                position = province;
-            }
+            let position = city == "" ? province : city;
             const keyword = data.field.keyword;
-            console.log(JSON.stringify(data.field));
+            // console.log("province=" + province + ",city=" + city + ",position=" + position);
+            // console.log("最终提交json=" + JSON.stringify(data.field));
             //提交
             $.ajax({
                 type: "get",
-                url: "/job",
+                url: "/" + projectName + "/job",
                 data: "keyword=" + keyword + "&position=" + position,
                 dataType: "json",
                 success: function (response) {
-                    console.log("state=" + response.state);
+                    // console.log("state=" + response.state);
                     if (response.state == 200) {//返回有效结果
-                        console.log("response.data.ifNew=" + response.data.ifNew);
+                        // console.log("response.data.ifNew=" + response.data.ifNew);
                         if (response.data.ifNew) {//第一次查询
+                            layer.msg("本次结果共有" + response.data.totalPage + "页，预计耗时" + response.data.totalPage + "秒...");
                             getAndShowNewResult(keyword, position);
                         } else {
                             loader.close();
@@ -200,13 +207,14 @@
                                 getAndShowNewResult(keyword, position);
                             });
                         }
-                    } else {
+                    } else {//状态码非200
+                        loader.close();
                         layer.alert(response.message);
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     loader.close();
-                    layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState + "；HTTP状态码：" + jqXHR.status + "；状态码错误信息：" + jqXHR.statusText + "；状态：" + textStatus);
+                    layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState + "；\nHTTP状态码：" + jqXHR.status + "；\n状态码错误信息：" + jqXHR.statusText + "；\n状态：" + textStatus);
                 }
             });
             return false;
