@@ -25,6 +25,7 @@ import java.util.List;
 
 import com.getfei.jobSpider.dao.IPositionDao;
 import com.getfei.jobSpider.entity.Position;
+import com.getfei.jobSpider.entity.Positions;
 import com.getfei.jobSpider.service.IPositionService;
 
 @Service
@@ -37,7 +38,12 @@ public class PositionServiceImpl implements IPositionService {
 	
 	@Override
 	public List<Position> list() {
-		List<Position> positions=positionDao.findAll();
+		//先去Positions里找，找不到再去数据库里找
+		List<Position> positions=Positions.getList();
+		if(positions==null) {
+			logger.warn("获取positions时警告：Positions里找不到，去数据库里找。");
+			positions=positionDao.findAll();
+		}
 		return positions;
 	}
 	
