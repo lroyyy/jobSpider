@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.getfei.jobSpider.dao.ITechnologyDao;
+import com.getfei.jobSpider.entity.Technologies;
 import com.getfei.jobSpider.entity.Technology;
 import com.getfei.jobSpider.service.ITechnologyService;
 import com.getfei.jobSpider.util.MongoResult;
@@ -28,7 +29,11 @@ public class TechnologyServiceImpl implements ITechnologyService {
 
 	@Override
 	public List<String> ListType() {
-		List<String> types = technologyDao.findAllType();
+		List<String> types=Technologies.getTechnologyTypes();
+		if(types==null) {
+			logger.warn("获取technologyTypes时，找不到technologies.technologyTypes，去库里找。");
+			types = technologyDao.findAllType();
+		}
 		return types;
 	}
 
@@ -71,6 +76,7 @@ public class TechnologyServiceImpl implements ITechnologyService {
 			Technology newTechnology = new Technology(name, type, aliases == null ? new String[0] : aliases);
 			technologyDao.insert(newTechnology);
 			logger.info("成功新增："+newTechnology);
+			Technologies.init();
 		}
 		return mr;
 	}
