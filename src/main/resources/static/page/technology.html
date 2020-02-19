@@ -66,8 +66,12 @@
         </fieldset>
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
         <script type="text/html" id="currentTableBar">
-            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
-            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            <!-- <div class="layui-input-inline">
+                <input type="text" id="type-new-alias" name="new-alias" autocomplete="off" class="layui-input">
+            </div> -->
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add-alias">新增别名</a>
+        <!-- <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a> -->
         </script>
     </div>
 </div>
@@ -78,9 +82,9 @@
             form = layui.form,
             table = layui.table;
 
-        /**展示技术栈*/
+        /**展示技术栈table*/
         const showTechnologies = function (type, name) {
-            let url = "/"+projectName+'/technologies';
+            let url = "/" + projectName + '/technologies';
             if (type != undefined) {
                 url += "?type=" + type;
             }
@@ -99,10 +103,10 @@
                     dataName: 'data' // 规定数据列表的字段名称，默认：data
                 },
                 cols: [[
-                    { type: "checkbox", width: 50, fixed: "left" },
+                    // { type: "checkbox", width: 50, fixed: "left" },
                     { field: 'type', width: 150, title: '类别', sort: true },
-                    { field: 'name', width: 150, title: '名称' , sort: true},
-                    { field: 'aliases', width: 300, title: '别名', sort: true },
+                    { field: 'name', width: 150, title: '名称', sort: true },
+                    { field: 'aliases', width: 400, title: '别名', sort: true },
                     { title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center" }
                 ]]
                 // ,limits: [10, 15, 20, 25, 50, 100],
@@ -117,7 +121,7 @@
         const initTypes = function () {
             $.ajax({
                 type: "get",
-                url: "/"+projectName+"/technologies/types",
+                url: "/" + projectName + "/technologies/types",
                 dataType: "json",
                 success: function (response) {
                     console.log("技术类型获取成功。");
@@ -135,9 +139,9 @@
         initTypes();
 
         /**重载表格*/
-        const reloadTable=function(data){
+        const reloadTable = function (data) {
             // const data=form.val("currentTableId");
-            console.log("before reloadTable,data="+JSON.stringify(data));
+            console.log("before reloadTable,data=" + JSON.stringify(data));
             table.reload('currentTableId', {
                 page: {
                     curr: 1
@@ -162,7 +166,7 @@
             //执行搜索重载
             $.ajax({
                 type: "post",
-                url: "/"+projectName+"/technologies/",
+                url: "/" + projectName + "/technologies/",
                 data: data.field,
                 dataType: "json",
                 success: function (response) {
@@ -181,7 +185,7 @@
             layer.msg('添加数据');
             $.ajax({
                 type: "post",
-                url: "/"+projectName+"/technology/",
+                url: "/" + projectName + "/technology/",
                 data: "data",
                 dataType: "json",
                 success: function (response) {
@@ -206,16 +210,55 @@
 
         //操作区按钮
         table.on('tool(currentTableFilter)', function (obj) {
-            var data = obj.data;
-            if (obj.event === 'edit') {
-                layer.alert('编辑行：<br>' + JSON.stringify(data))
-            } else if (obj.event === 'delete') {
-                layer.confirm('真的删除行么', function (index) {
-                    obj.del();
+            layer.alert("本行数据：" + JSON.stringify(obj.data));
+            if (obj.event === "add-alias") {
+                layer.prompt({
+                    formType: 2,
+                    value: "",
+                    title: "新增别名",
+                    area: ['150px', '25px'] //自定义文本域宽高
+                }, function (value, index, elem) {
                     layer.close(index);
+                    const newAlias = value;
+                    obj.data.alias=newAlias;
+                    $.when(addAlias(obj.data)).done(function(data){
+                        if(data.state==200){
+                            obj.update({
+                                aliases:""
+                            });
+                        }
+                    });
                 });
             }
+            // if (obj.event === 'edit') {
+            //     layer.alert('编辑行：<br>' + JSON.stringify(data))
+            // } else if (obj.event === 'delete') {
+            //     layer.confirm('真的删除行么', function (index) {
+            //         obj.del();
+            //         layer.close(index);
+            //     });
+            // }
         });
+
+        /**新增别名*/
+        const addAlias = function (data) {
+            var defer = $.Deferred();
+            $.ajax({
+                type: "post",
+                url: "/" + projectName + "/technologies/alias",
+                data: data,
+                dataType: "json",
+                success: function (response) {
+                    if (response.state == 200) {
+                        layer.alert("新增成功，谢谢你的贡献！");
+                    } else {
+                        layer.alert("抱歉，新增失败，原因："+response.message);
+                    }
+                    defer.resolve(response);
+                }
+            });
+            return defer.promise();
+        }
 
     });
 </script>

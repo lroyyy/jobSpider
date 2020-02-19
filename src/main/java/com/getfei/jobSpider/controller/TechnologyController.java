@@ -68,5 +68,18 @@ public class TechnologyController extends BaseController {
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(SUCCESS, r);
 		return rs;
 	}
+	
+	/** 新增别名 */
+	@PostMapping("/alias")
+	public ResponseResult<List<Technology>> addAlias(@RequestParam("name") String name, @RequestParam("type") String type,
+			@RequestParam(name = "alias") String alias) {
+		MongoResult mongoResult = technologyService.addAlias(name, type, alias);
+		Integer state = mongoResult.isSuccess() ? SUCCESS : ERROR;
+		ResponseResult<List<Technology>> rs = new ResponseResult<>(state);
+		if (state == ERROR) {
+			rs.setMessage(mongoResult.getMessage());
+		}
+		return rs;
+	}
 
 }

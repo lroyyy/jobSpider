@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import com.getfei.jobSpider.dao.ITechnologyDao;
@@ -19,6 +20,7 @@ import com.getfei.jobSpider.entity.Technology;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.DuplicateKeyException;
+import com.mongodb.client.result.UpdateResult;
 
 @Component
 public class TechnologyDaoImpl implements ITechnologyDao {
@@ -105,6 +107,16 @@ public class TechnologyDaoImpl implements ITechnologyDao {
 	@Override
 	public List<Technology> findByAlias(String alias) {
 		return mongoTemplate.find(Query.query(Criteria.where("aliases").regex("^"+alias+"$","i")),Technology.class, collectionName);
+	}
+
+	@Override
+	public boolean insertAlias(String type,String name,String alias) {
+		Criteria criatira = new Criteria();
+		Update update=new Update().push("aliases", alias);
+		criatira.andOperator(Criteria.where("type").is(type),Criteria.where("name").is(name));
+		Query query=new Query(criatira);
+		UpdateResult updateResult=mongoTemplate.updateFirst(query,update,collectionName);
+		return updateResult.wasAcknowledged();
 	}
 
 }

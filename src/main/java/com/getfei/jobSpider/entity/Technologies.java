@@ -33,8 +33,8 @@ public class Technologies {
 	public static void init() {
 		technologyMapping = getTechnologiesFromMongoDB();
 		technologyTypes=getTechnologyTypesFromMongoDB();
-		logger.info("technologyMapping初始化成功。");
-		logger.info("technologyTypes初始化成功。");
+		logger.info("technologyMapping初始化成功，个数为"+technologyMapping.size());
+		logger.info("technologyTypes初始化成功，个数为"+technologyTypes.size());
 	}
 
 	/**构造自MongoDB*/

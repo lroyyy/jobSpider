@@ -19,9 +19,13 @@ public interface ITechnologyService {
 	/** 新增	 */
 	MongoResult add(String name,String type,String[] aliases);
 	
+	/**查询所有类型*/
 	List<String> ListType();
 	
 	/**根据类型（精确）和名称（模糊）和别名（模糊）查找*/
 	List<Technology> getByTypeAndNameLikeAndAliasLike(String type,String name,String alias);
+	
+	/**新增别名*/
+	MongoResult addAlias(String name,String type,String alias);
 	
 }

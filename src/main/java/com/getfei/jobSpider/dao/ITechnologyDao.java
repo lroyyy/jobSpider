@@ -33,4 +33,7 @@ public interface ITechnologyDao {
 	/**根据别名查询*/
 	List<Technology> findByAlias(String alias);
 	
+	/**新增别名*/
+	boolean insertAlias(String type,String name,String alias);
+	
 }
