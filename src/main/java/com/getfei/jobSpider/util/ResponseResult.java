@@ -8,6 +8,8 @@ public class ResponseResult <T>{
 	private T data;
 	private Integer dataCount;
 	private String message;
+	private Integer page;
+	private Integer limit;
 	public ResponseResult() {
 		super();
 	}

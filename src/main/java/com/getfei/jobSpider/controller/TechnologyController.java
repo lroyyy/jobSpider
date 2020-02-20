@@ -27,13 +27,25 @@ public class TechnologyController extends BaseController {
 	@GetMapping()
 	public ResponseResult<List<Technology>> get(@RequestParam(value = "type", required = false) String type,
 			@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "alias", required = false) String alias) {
+			@RequestParam(value = "alias", required = false) String alias,
+			@RequestParam(value = "page", required = false) Integer page,
+			@RequestParam(value = "limit", required = false) Integer limit) {
 		logger.info("type=" + type + ",name=" + name + ",alias=" + alias);
 		List<Technology> technologies;
 		technologies = type == null && name == null && alias == null ? technologyService.list()
 				: technologyService.getByTypeAndNameLikeAndAliasLike(type, name, alias);
+		//分页
+		int totalCount=technologies.size();
+		if(page!=null&&limit!=null) {
+			//TODO 最后一页有误！
+			int fromIndex=(page-1)*limit;
+			if(fromIndex+limit<totalCount) {
+				technologies=technologies.subList(fromIndex, fromIndex+limit);
+			}
+		}
+		//构造responseResult
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(SUCCESS, technologies);
-		rs.setDataCount(technologies.size());
+		rs.setDataCount(totalCount);
 		return rs;
 	}
 
