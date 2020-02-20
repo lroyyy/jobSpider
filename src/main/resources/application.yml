@@ -14,3 +14,14 @@ spring:
 #  aop:
 #   proxy-target-class: false
 
+#关闭mongodb中“Found cycle for field 'xx' in type 'xx' for path 'xx'”日志
+logging:
+ level:
+  org:
+   springframework:
+    data:
+     mongodb:
+      core:
+       index: false
+
+
