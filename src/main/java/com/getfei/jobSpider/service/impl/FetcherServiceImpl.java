@@ -92,7 +92,7 @@ public class FetcherServiceImpl implements IFetcherService {
 			}
 		}
 		if (jobs.isEmpty()) {
-			throw new EmptyFetchedResultException("爬取结果为空，请更换关键字后再试。");
+			throw new EmptyFetchedResultException("找不到任何招聘信息，请更换关键字后再试。");
 		}
 		//将爬取的工作和爬取成功失败数注入fetchedResult对象
 		result.setJobs(jobs);
@@ -112,20 +112,19 @@ public class FetcherServiceImpl implements IFetcherService {
 			document = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows NT 6.1; rv:30.0) Gecko/20100101 Firefox/30.0")
 					.get();
 			// 职位
-			Element e = document.selectFirst("h1");
-			String jobTitle = e.text();
+			Element element = document.selectFirst("h1");
+			String jobTitle = element.text();
 			job.setJobTitle(jobTitle);
+//			logger.info("jobTitle="+jobTitle);
 			// 薪资
-			e = document.selectFirst(".tHeader strong");
-			String salary = e.text();
+			String salary = document.selectFirst(".tHeader strong").text();
 			job.setSalary(salary);
 			// 公司名称
-			e = document.selectFirst(".catn");
-			String companyName = e.text();
+			String companyName = document.selectFirst(".catn").text();
 			job.setCompanyName(companyName);
 			// 职位信息
 			//2019.1.19：51job改了DOM！
-//			String jobMessage = "";
+			String[] msgs= {""};
 //			Elements es = document.select(".job_msg div");
 //			for (int i = 0; i < es.size(); i++) {
 //				String line = es.get(i).text();
@@ -134,8 +133,19 @@ public class FetcherServiceImpl implements IFetcherService {
 //					jobMessage += line + "\n";
 //				}
 //			}
-			e = document.selectFirst(".job_msg");
-			String jobMessage = e.html();
+//			element = document.selectFirst(".job_msg");
+			Elements es=document.select(".job_msg > *");
+			es.forEach(e->{
+				if(!e.hasAttr("class")) {
+					String line = e.text();
+					if(!"".equals(line)) {
+						msgs[0] += line + "\n";
+					}
+				}
+			});
+//			String jobMessage = e.html();
+			String jobMessage = msgs[0];
+//			logger.info("jobMessage="+jobMessage);
 			job.setJobMessage(jobMessage);
 		} catch (IOException e1) {
 			throw new Exception(url + "爬取失败，原因：" + e1.getMessage());

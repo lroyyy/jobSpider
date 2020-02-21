@@ -1,8 +1,3 @@
-<style>
-    .layui-form-select dl {
-        z-index: 9999;
-    }
-</style>
 <div class="layuimini-container">
     <div class="layuimini-main">
 
@@ -43,8 +38,9 @@
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit="" lay-filter="demo1">开始爬取</button>
+                    <button class="layui-btn" lay-submit="" lay-filter="start">开始爬取</button>
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <!-- <button class="layui-btn" lay-filter="stop">终止</button> -->
                 </div>
             </div>
         </form>
@@ -57,24 +53,47 @@
 <script src="lib/echarts/macarons.js" charset="utf-8"></script>
 <script>
     layui.use(['form', 'layedit', 'laydate', 'jquery'], function () {
-        var form = layui.form
-            , layer = layui.layer
-            , layedit = layui.layedit
-            , laydate = layui.laydate
+        var form = layui.form,
+            layer = layui.layer,
+            layedit = layui.layedit,
+            laydate = layui.laydate
             // , echarts = layui.echarts
-            , $ = layui.$;
+            ,
+            $ = layui.$;
+        let pieChart, wordCloudChart;
         let provinces = [];
-        var loader = {//读取遮罩
+        let currentAjax=null;
+        var loader = { //读取层
             ui: null,
+            // ajaxObj: null,
             show: function () {
-                this.ui = layer.load(3, { shade: [0.6, '#def'] });
+                this.ui = layer.load(3, {
+                    shade: [0.6, '#def'],
+                    btn: "中断分析",
+                    yes: function (index, layero) {
+                        console.log(JSON.stringify(layero));
+                        // console.log(this.ajaxObj);
+                        if(currentAjax!=null){
+                            currentAjax.abort();
+                            this.close();
+                        }
+                    }
+                });
             },
             close: function () {
                 layer.close(this.ui);
+                if(currentAjax!=null){
+                    currentAjax=null;
+                }
             }
+            // ,bindAJaxObj: function (ajaxObj) {
+            //     console.log("inbindfn,"+(ajaxObj==null));
+            //     this.ajaxObj = ajaxObj;
+            // }
         };
         //初始化表单，要加上，不然刷新部分组件可能会不加载
         form.render();
+        // $(".layui-header").css("z-index")
 
         /**初始化位置*/
         const initPositions = function () {
@@ -145,13 +164,13 @@
 
         /**展示全新结果*/
         const getAndShowNewResult = function (keyword, position) {
-            $.ajax({
+            currentAjax=$.ajax({
                 type: "get",
                 url: "/" + projectName + "/job",
                 data: "keyword=" + keyword + "&position=" + position + "&way=getNew",
                 dataType: "json",
                 success: function (response) {
-                    if (response.state == 200) {//返回有效结果
+                    if (response.state == 200) { //返回有效结果
                         showResult(response.data);
                         loader.close();
                     } else {
@@ -161,9 +180,12 @@
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     loader.close();
-                    layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState + "；HTTP状态码：" + jqXHR.status + "；状态码错误信息：" + jqXHR.statusText + "；状态：" + textStatus);
+                    layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState + "；HTTP状态码：" +
+                        jqXHR.status + "；状态码错误信息：" + jqXHR.statusText + "；状态：" + textStatus);
                 }
             });
+            // console.log(ajaxObj==null);
+            // loader.bindAJaxObj(ajaxObj);
         }
 
         /**获取本地时间*/
@@ -174,7 +196,7 @@
         }
 
         //监听提交
-        form.on('submit(demo1)', function (data) {
+        form.on('submit(start)', function (data) {
             loader.show();
             //处理参数
             const province = data.field.province;
@@ -191,15 +213,20 @@
                 dataType: "json",
                 success: function (response) {
                     // console.log("state=" + response.state);
-                    if (response.state == 200) {//返回有效结果
+                    if (response.state == 200) { //返回有效结果
                         // console.log("response.data.ifNew=" + response.data.ifNew);
-                        if (response.data.ifNew) {//第一次查询
-                            layer.msg("本次结果共有" + response.data.totalPage + "页，预计耗时" + response.data.totalPage + "秒...");
+                        if (response.data.ifNew) { //第一次查询
+                            layer.msg("本次结果共有" + response.data.totalPage + "页，预计耗时" +
+                                response.data.totalPage + "秒...");
                             getAndShowNewResult(keyword, position);
                         } else {
                             loader.close();
-                            const msg = "某个小伙伴在" + getLocalDate(response.data.date) + "做过相同条件的分析，点击【确定】直接返回上次的结果，点击【取消】分析最新的数据，点击【×】取消本次查询。";
-                            const confirmer = layer.confirm(msg, { icon: 3, title: '提示' }, function (index) {
+                            const msg = "某个小伙伴在" + getLocalDate(response.data.date) +
+                                "做过相同条件的分析，<br>点击【确定】直接返回上次分析的结果，<br>点击【取消】分析最新的数据，<br>点击【×】取消本次查询。";
+                            const confirmer = layer.confirm(msg, {
+                                icon: 3,
+                                title: '提示'
+                            }, function (index) {
                                 layer.close(index);
                                 loader.show();
                                 //返回历史结果
@@ -212,14 +239,16 @@
                                 getAndShowNewResult(keyword, position);
                             });
                         }
-                    } else {//状态码非200
+                    } else { //状态码非200
                         loader.close();
                         layer.alert(response.message);
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     loader.close();
-                    layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState + "；\nHTTP状态码：" + jqXHR.status + "；\n状态码错误信息：" + jqXHR.statusText + "；\n状态：" + textStatus);
+                    layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState +
+                        "；\nHTTP状态码：" + jqXHR.status + "；\n状态码错误信息：" + jqXHR
+                        .statusText + "；\n状态：" + textStatus);
                 }
             });
             return false;
@@ -227,15 +256,18 @@
 
         /**初始化饼图*/
         const initPie = function (data) {
-            var legendData = [];//图例数据
+            legendData = []; //图例数据
             data.technologyCounter.forEach(e => {
                 legendData.push(e.name);
             });
-            var chart = echarts.init(document.getElementById('div-chart'), "macarons");
+            pieChart = echarts.init(document.getElementById('div-chart'), "macarons");
             option = {
                 title: {
                     text: '技术栈饼图',
                     left: 'center',
+                    textStyle: {
+                        fontSize: "200%"
+                    }
                     // top: 20,
                     // textStyle: {
                     //     color: '#ccc'
@@ -256,9 +288,16 @@
                     show: true,
                     feature: {
                         // mark: { show: true },
-                        dataView: { show: true, readOnly: true },
-                        restore: { show: true },
-                        saveAsImage: { show: true }
+                        dataView: {
+                            show: true,
+                            readOnly: true
+                        },
+                        restore: {
+                            show: true
+                        },
+                        saveAsImage: {
+                            show: true
+                        }
                     }
                 },
                 series: [
@@ -339,18 +378,18 @@
                     }
                 ]
             };
-            chart.setOption(option);
+            pieChart.setOption(option);
         }
 
         /**初始化词云*/
         const initWordCloud = function (data) {
-            var chart = echarts.init(document.getElementById('div-wordcloud'), "macarons");
+            wordCloudChart = echarts.init(document.getElementById('div-wordcloud'), "macarons");
             option = {
                 title: {
-                    text: '技术栈词云',//标题
+                    text: '技术栈词云', //标题
                     x: 'center',
                     textStyle: {
-                        fontSize: 23
+                        fontSize: "200%"
                     }
                 },
                 backgroundColor: '#F7F7F7',
@@ -358,10 +397,10 @@
                     show: true
                 },
                 series: [{
-                    name: '技术热度分析',//数据提示窗标题
+                    name: '次数', //数据提示窗标题
                     type: 'wordCloud',
-                    sizeRange: [12, 120],//画布范围，如果设置太大会出现少词（溢出屏幕）
-                    rotationRange: [-45, 90],//数据翻转范围
+                    sizeRange: [12, 120], //画布范围，如果设置太大会出现少词（溢出屏幕）
+                    rotationRange: [-45, 90], //数据翻转范围
                     //shape: 'circle',
                     textPadding: 10,
                     drawOutOfBound: false,
@@ -387,27 +426,46 @@
                     data: data.technologyCounter //name和value建议用小写，大写有时会出现兼容问题
                 }]
             };
-            chart.setOption(option);
+            wordCloudChart.setOption(option);
         }
+
+        // echarts 窗口缩放自适应
+        window.onresize = function () {
+            if(pieChart!=null){
+                pieChart.resize();
+            }
+            if(wordCloudChart!=null){
+                wordCloudChart.resize();
+            }
+        }
+
         //表单初始赋值
         form.val('example', {
-            "like[write]": true //复选框选中状态
-            , "close": true //开关状态
-            , "keyword": "java"
-            , "position": "泉州"
+            // "like[write]": true //复选框选中状态
+            // , "close": true //开关状态
+            "keyword": "java"
         })
     });
 </script>
 <style type="text/css">
     #div-chart {
         display: none;
-        width: auto;
-        height: 40vw;
+        width: 100vw;
+        height: 100vh;
     }
 
     #div-wordcloud {
         display: none;
-        width: auto;
-        height: 35vw;
+        width: 100vw;
+        height: 70vh;
+    }
+
+     .layui-body {
+        /*防止下拉框显示不出来*/
+    overflow: visible;
+    }
+
+    */ .layui-header {
+        z-index: auto;
     }
 </style>

@@ -1,10 +1,8 @@
 package com.getfei.jobSpider.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,16 +32,15 @@ public class TechnologyController extends BaseController {
 		List<Technology> technologies;
 		technologies = type == null && name == null && alias == null ? technologyService.list()
 				: technologyService.getByTypeAndNameLikeAndAliasLike(type, name, alias);
-		//分页
-		int totalCount=technologies.size();
-		if(page!=null&&limit!=null) {
-			//TODO 最后一页有误！
-			int fromIndex=(page-1)*limit;
-			if(fromIndex+limit<totalCount) {
-				technologies=technologies.subList(fromIndex, fromIndex+limit);
-			}
+		// 分页
+		int totalCount = technologies.size();
+		if (page != null && limit != null) {
+			int fromIndex = (page - 1) * limit;
+			logger.info("totalCount=" + totalCount + ",fromIndex=" + (fromIndex));
+			int toIndex = fromIndex + limit < totalCount ? fromIndex + limit : totalCount;
+			technologies = technologies.subList(fromIndex, toIndex);
 		}
-		//构造responseResult
+		// 构造responseResult
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(SUCCESS, technologies);
 		rs.setDataCount(totalCount);
 		return rs;
@@ -54,8 +51,6 @@ public class TechnologyController extends BaseController {
 	public ResponseResult<List<Technology>> add(@RequestParam("name") String name, @RequestParam("type") String type,
 			@RequestParam(name = "alias", required = false) String aliasStr) {
 		String[] aliases = !"".equals(aliasStr) ? aliasStr.split(",") : null;
-		logger.info("preAdd:name=" + name + ",type=" + type + ",aliasStr=" + aliasStr + ",aliases="
-				+ Arrays.toString(aliases));
 		MongoResult mongoResult = technologyService.add(name, type, aliases);
 		Integer state = mongoResult.isSuccess() ? SUCCESS : ERROR;
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(state);
@@ -72,7 +67,7 @@ public class TechnologyController extends BaseController {
 		ResponseResult<List<String>> rs = new ResponseResult<>(SUCCESS, types);
 		return rs;
 	}
-	
+
 	/** 获取所有技术类型 */
 	@GetMapping("/bytype")
 	public ResponseResult<List<Technology>> getByType(@RequestParam("type") String type) {
@@ -80,11 +75,11 @@ public class TechnologyController extends BaseController {
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(SUCCESS, r);
 		return rs;
 	}
-	
+
 	/** 新增别名 */
 	@PostMapping("/alias")
-	public ResponseResult<List<Technology>> addAlias(@RequestParam("name") String name, @RequestParam("type") String type,
-			@RequestParam(name = "alias") String alias) {
+	public ResponseResult<List<Technology>> addAlias(@RequestParam("name") String name,
+			@RequestParam("type") String type, @RequestParam(name = "alias") String alias) {
 		MongoResult mongoResult = technologyService.addAlias(name, type, alias);
 		Integer state = mongoResult.isSuccess() ? SUCCESS : ERROR;
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(state);

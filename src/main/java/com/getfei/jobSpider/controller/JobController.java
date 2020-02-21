@@ -76,7 +76,7 @@ public class JobController extends BaseController {
 			// 已有历史结果
 			analysisResult.setIfNew(false);
 		}else {
-			//找不到历史结果
+			//找不到历史结果,先爬
 			analysisResult=new AnalysisResult();
 			int totalPage=webFetcherService.getTotalPage(keyword, position);
 			analysisResult.setTotalPage(totalPage);//设置总数
@@ -90,21 +90,14 @@ public class JobController extends BaseController {
 		try {
 			// 爬取
 			FetchedResult fetchResult = webFetcherService.fetchJobs(keyword, position);
-			if (fetchResult == null) {
-				logger.debug("fetchResult=null");
-				throw new Exception("爬取结果为空");
-			}
 			// 分析
 			analysisResult = analyzerService.analyse(fetchResult);
+			if(analysisResult.getTechnologyCounter().size()==0) {
+				throw new Exception("匹配不到任何技术，请编辑技术栈后再试。");
+			}
 			// 分析结果存入数据库
 			analysisResultService.insert(analysisResult);
-//			//删除旧结果
-//			if(oldResult!=null) {
-//				logger.info("oldId="+oldResult.getId());
-//				analysisResultService.delete(oldResult);
-//			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw e;
 		}
 		return analysisResult;
