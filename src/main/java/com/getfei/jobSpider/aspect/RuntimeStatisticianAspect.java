@@ -8,9 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+/**
+ * 运行时间统计切面
+ * @author lroy
+ *
+ */
 @Aspect
 @Component
-public class MyAspect {
+public class RuntimeStatisticianAspect {
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 

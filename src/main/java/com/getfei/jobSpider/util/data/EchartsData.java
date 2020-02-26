@@ -1,4 +1,4 @@
-package com.getfei.jobSpider.entity;
+package com.getfei.jobSpider.util.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,9 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class EchartsData extends BaseEntity{
-
-	private static final long serialVersionUID = -1532829381884829563L;
+public class EchartsData{
 
 	private String name;
 	private String value;

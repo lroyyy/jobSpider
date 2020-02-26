@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 
+import com.getfei.jobSpider.util.data.EchartsData;
+
 import lombok.Getter;
 import lombok.Setter;
 

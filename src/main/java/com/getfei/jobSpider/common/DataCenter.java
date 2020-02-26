@@ -1,4 +1,6 @@
-package com.getfei.jobSpider.entity;
+package com.getfei.jobSpider.common;
+
+import com.getfei.jobSpider.entity.BaseEntity;
 
 import lombok.Getter;
 import lombok.Setter;
