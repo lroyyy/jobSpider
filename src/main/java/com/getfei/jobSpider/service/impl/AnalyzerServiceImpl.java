@@ -1,32 +1,23 @@
 package com.getfei.jobSpider.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.getfei.jobSpider.dao.IJobDao;
-import com.getfei.jobSpider.dao.ITechnologyDao;
 import com.getfei.jobSpider.entity.AnalysisResult;
-import com.getfei.jobSpider.entity.Counter;
 import com.getfei.jobSpider.entity.EchartsData;
 import com.getfei.jobSpider.entity.FetchedResult;
 import com.getfei.jobSpider.entity.Job;
 import com.getfei.jobSpider.entity.Technologies;
 import com.getfei.jobSpider.entity.Technology;
-import com.getfei.jobSpider.entity.TechnologyType;
 import com.getfei.jobSpider.service.IAnalyzerService;
 
 @Service
