@@ -36,4 +36,7 @@ public interface ITechnologyDao {
 	/**新增别名*/
 	boolean insertAlias(String type,String name,String alias);
 	
+	/**统计*/
+	long count();
+	
 }

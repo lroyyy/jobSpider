@@ -129,4 +129,9 @@ public class TechnologyServiceImpl implements ITechnologyService {
 		return mongoResult;
 	}
 
+	@Override
+	public long count() {
+		return technologyDao.count();
+	}
+
 }

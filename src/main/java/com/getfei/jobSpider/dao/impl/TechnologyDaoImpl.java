@@ -2,12 +2,17 @@ package com.getfei.jobSpider.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -22,6 +27,11 @@ import com.mongodb.DBObject;
 import com.mongodb.DuplicateKeyException;
 import com.mongodb.client.result.UpdateResult;
 
+/**
+ * technologyDao的mongoTemplate实现
+ * @author getfei
+ *
+ */
 @Component
 public class TechnologyDaoImpl implements ITechnologyDao {
 
@@ -85,10 +95,8 @@ public class TechnologyDaoImpl implements ITechnologyDao {
 		//筛选type
 		Criteria typeCriatira=type==null||"".equals(type)?new Criteria():Criteria.where("type").is(type);		
 		//筛选name
-//		Pattern namePattern = Pattern.compile("^.*"+name+".*$", Pattern.CASE_INSENSITIVE);
 		Criteria nameCriatira=name==null||"".equals(name)?new Criteria():Criteria.where("name").regex("^.*"+name+".*$","i");
 		//筛选alias
-//		Pattern aliasPattern = Pattern.compile("^.*"+alias+".*$", Pattern.CASE_INSENSITIVE);
 		Criteria aliasCriatira=alias==null||"".equals(alias)?new Criteria():Criteria.where("aliases").regex("^.*"+alias+".*$","i");
 		//并联多条件
 		criatira.andOperator(typeCriatira,nameCriatira,aliasCriatira);
@@ -117,6 +125,11 @@ public class TechnologyDaoImpl implements ITechnologyDao {
 		Query query=new Query(criatira);
 		UpdateResult updateResult=mongoTemplate.updateFirst(query,update,collectionName);
 		return updateResult.wasAcknowledged();
+	}
+
+	@Override
+	public long count() {
+		return mongoTemplate.count(Query.query(Criteria.where("id")),Technology.class,collectionName);
 	}
 
 }

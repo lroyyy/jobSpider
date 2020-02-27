@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.getfei.jobSpider.entity.AnalysisResult;
-import com.getfei.jobSpider.entity.EchartsData;
 import com.getfei.jobSpider.entity.FetchedResult;
 import com.getfei.jobSpider.entity.Job;
 import com.getfei.jobSpider.entity.Technologies;
 import com.getfei.jobSpider.entity.Technology;
 import com.getfei.jobSpider.service.IAnalyzerService;
+import com.getfei.jobSpider.util.data.EchartsData;
 
 @Service
 public class AnalyzerServiceImpl implements IAnalyzerService {

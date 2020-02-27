@@ -2,7 +2,7 @@
     <div class="layuimini-main">
 
         <blockquote class="layui-elem-quote layui-text">
-            我是提示
+            爬取招聘网站中的公开的招聘信息，统计当下某地区技术热度。
         </blockquote>
 
         <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
@@ -48,32 +48,28 @@
         <div id="div-wordcloud"></div>
     </div>
 </div>
-<script src="lib/echarts/echarts.js" charset="utf-8"></script>
-<script src="lib/echarts/echarts-wordcloud.js" charset="utf-8"></script>
-<script src="lib/echarts/macarons.js" charset="utf-8"></script>
+
 <script>
     layui.use(['form', 'layedit', 'laydate', 'jquery'], function () {
         var form = layui.form,
             layer = layui.layer,
             layedit = layui.layedit,
-            laydate = layui.laydate
-            // , echarts = layui.echarts
-            ,
+            laydate = layui.laydate,
+            // echarts = layui.echarts
             $ = layui.$;
         let pieChart, wordCloudChart;
         let provinces = [];
-        let currentAjax=null;
+        let currentAjax = null;
+
         var loader = { //读取层
             ui: null,
-            // ajaxObj: null,
             show: function () {
                 this.ui = layer.load(3, {
                     shade: [0.6, '#def'],
                     btn: "中断分析",
                     yes: function (index, layero) {
                         console.log(JSON.stringify(layero));
-                        // console.log(this.ajaxObj);
-                        if(currentAjax!=null){
+                        if (currentAjax != null) {
                             currentAjax.abort();
                             this.close();
                         }
@@ -82,14 +78,10 @@
             },
             close: function () {
                 layer.close(this.ui);
-                if(currentAjax!=null){
-                    currentAjax=null;
+                if (currentAjax != null) {
+                    currentAjax = null;
                 }
             }
-            // ,bindAJaxObj: function (ajaxObj) {
-            //     console.log("inbindfn,"+(ajaxObj==null));
-            //     this.ajaxObj = ajaxObj;
-            // }
         };
         //初始化表单，要加上，不然刷新部分组件可能会不加载
         form.render();
@@ -152,6 +144,29 @@
             form.render("select");
         });
 
+        //新增访问日志
+        const addVisitLog = function () {
+            const ip=returnCitySN["cip"];
+            if(!ip){
+                console.log("ip获取失败。");
+                return;
+            }
+            $.ajax({
+                type: "post",
+                url: "/" + projectName + "/log/visitLog",
+                data: "ip="+ip,
+                dataType: "json",
+                success: function (response) {
+                    if(response.state==200){
+                        console.log("访问日志写入成功。");
+                    }else{
+                        console.log("访问日志写入失败。");
+                    }
+                }
+            });
+        }
+        addVisitLog();
+
         /**展示结果*/
         const showResult = function (data) {
             //显示图标
@@ -164,7 +179,7 @@
 
         /**展示全新结果*/
         const getAndShowNewResult = function (keyword, position) {
-            currentAjax=$.ajax({
+            currentAjax = $.ajax({
                 type: "get",
                 url: "/" + projectName + "/job",
                 data: "keyword=" + keyword + "&position=" + position + "&way=getNew",
@@ -184,8 +199,6 @@
                         jqXHR.status + "；状态码错误信息：" + jqXHR.statusText + "；状态：" + textStatus);
                 }
             });
-            // console.log(ajaxObj==null);
-            // loader.bindAJaxObj(ajaxObj);
         }
 
         /**获取本地时间*/
@@ -305,8 +318,8 @@
                     {
                         name: '次数',
                         type: 'pie',
-                        selectedMode: 'single',
-                        minAngle: 5,
+                        selectedMode: 'multiple',
+                        minAngle: 2,
                         avoidLabelOverlap: true,
                         radius: [0, '45%'],
 
@@ -326,13 +339,15 @@
                     {
                         name: '次数',
                         type: 'pie',
+                        selectedMode: 'multiple',
                         radius: ['50%', '80%'],
-                        minAngle: 3,
+                        minAngle: 2,
                         avoidLabelOverlap: true,
                         label: {
                             normal: {
                                 // formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
-                                formatter: '  {b}：{c} - {d}%  ',
+                                formatter: '  {b}：{c}  ',
+                                // formatter: '  {b}：{c} - {d}%  ',
                                 backgroundColor: '#eee',
                                 borderColor: '#aaa',
                                 borderWidth: 1,
@@ -431,10 +446,10 @@
 
         // echarts 窗口缩放自适应
         window.onresize = function () {
-            if(pieChart!=null){
+            if (pieChart != null) {
                 pieChart.resize();
             }
-            if(wordCloudChart!=null){
+            if (wordCloudChart != null) {
                 wordCloudChart.resize();
             }
         }
@@ -445,6 +460,8 @@
             // , "close": true //开关状态
             "keyword": "java"
         })
+
+
     });
 </script>
 <style type="text/css">
@@ -460,12 +477,15 @@
         height: 70vh;
     }
 
-     .layui-body {
-        /*防止下拉框显示不出来*/
-    overflow: visible;
-    }
+    /*防止下拉框显示不出来*/
+    /* .layui-body {
+        overflow: visible;
+    } */
 
-    */ .layui-header {
+    .layui-header {
         z-index: auto;
     }
 </style>
+<!-- <script type="text/javascript" src="lib/echarts/echarts.min.js" defer charset="utf-8"></script>
+<script type="text/javascript" src="lib/echarts/echarts-wordcloud.js" defer charset="utf-8"></script>
+<script type="text/javascript" src="lib/echarts/macarons.js" defer charset="utf-8"></script> -->

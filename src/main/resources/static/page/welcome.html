@@ -40,7 +40,7 @@
                                                         <h5>访问统计</h5>
                                                     </div>
                                                     <div class="panel-content">
-                                                        <h1 class="no-margins">1234</h1>
+                                                        <h1 id="visit-count" class="no-margins">???</h1>
                                                         <small>当前分类总记录数</small>
                                                     </div>
                                                 </div>
@@ -54,7 +54,7 @@
                                                         <h5>技术统计</h5>
                                                     </div>
                                                     <div class="panel-content">
-                                                        <h1 class="no-margins">1234</h1>
+                                                        <h1 id="technology-count" class="no-margins">???</h1>
                                                         <small>当前分类总记录数</small>
                                                     </div>
                                                 </div>
@@ -68,7 +68,7 @@
                                                         <h5>分析统计</h5>
                                                     </div>
                                                     <div class="panel-content">
-                                                        <h1 class="no-margins">1234</h1>
+                                                        <h1 id="analysis-count" class="no-margins">???</h1>
                                                         <small>当前分类总记录数</small>
                                                     </div>
                                                 </div>
@@ -433,5 +433,17 @@
             echartsRecords.resize();
         }
 
+        //统计数据展示
+        $.ajax({
+            type: "get",
+            url: "/" + projectName + "/log/visitCount",
+            data: "data",
+            dataType: "json",
+            success: function (response) {
+                if(response.state==200){
+                    $("#visit-count").text(response.data);
+                }
+            }
+        });
     });
 </script>

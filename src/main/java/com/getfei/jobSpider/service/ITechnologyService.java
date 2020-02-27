@@ -28,4 +28,6 @@ public interface ITechnologyService {
 	/**新增别名*/
 	MongoResult addAlias(String name,String type,String alias);
 	
+	long count();
+	
 }

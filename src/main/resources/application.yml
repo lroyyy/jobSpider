@@ -1,5 +1,5 @@
 server:
- port: 8088
+ port: 8080
  servlet:
 #url中添加项目名
   context-path: /jobspider
