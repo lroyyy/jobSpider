@@ -60,7 +60,7 @@ public class PositionServiceImpl implements IPositionService {
 				String name = getNameByCode(code);
 				logger.info("code=" + code + ",name=" + name);
 				Position position=new Position(name,formatCode(code));
-				positionDao.save(position);
+				positionDao.insert(position);
 				code = getNextAvailablePositionCode(code);
 			} catch (Exception e) {
 				logger.error("爬取地区信息时出错，信息："+e.getMessage());

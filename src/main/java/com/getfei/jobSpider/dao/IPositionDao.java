@@ -6,7 +6,7 @@ import com.getfei.jobSpider.entity.Position;
 
 public interface IPositionDao {
 	
-	void save(Position position);
+	void insert(Position position);
 	
 	List<Position> findAll();
 	

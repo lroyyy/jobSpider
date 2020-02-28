@@ -12,31 +12,37 @@ import com.getfei.jobSpider.dao.IPositionDao;
 import com.getfei.jobSpider.entity.Position;
 
 @Component
-public class PositionDaoImpl implements IPositionDao {
+public class PositionDaoImpl extends MongoTemplateDaoImpl<Position> implements IPositionDao {
 
+//	@Autowired
+//	private MongoTemplate mongoTemplate;
+//	private String collectionName = "position";
+
+	
 	@Autowired
-	private MongoTemplate mongoTemplate;
-	private String collectionName = "position";
-
-	@Override
-	public void save(Position position) {
-		mongoTemplate.save(position, collectionName);
+	public PositionDaoImpl() {
+//		setCollectionName("position");
 	}
+	
+//	@Override
+//	public void save(Position position) {
+//		mongoTemplate.save(position, collectionName);
+//	}
 
-	@Override
-	public List<Position> findAll() {
-		List<Position> positions = mongoTemplate.findAll(Position.class, collectionName);
-		return positions;
-	}
+//	@Override
+//	public List<Position> findAll() {
+//		List<Position> positions = mongoTemplate.findAll(Position.class, collectionName);
+//		return positions;
+//	}
 
 	@Override
 	public Position findByName(String name) {
-		return mongoTemplate.findOne(Query.query(Criteria.where("name").is(name)), Position.class, collectionName);
+		return findByField("name", name);
 	}
 
 	@Override
 	public Position findByCode(String code) {
-		return mongoTemplate.findOne(Query.query(Criteria.where("code").is(code)), Position.class, collectionName);
+		return findByField("code", code);
 	}
 
 }

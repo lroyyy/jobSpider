@@ -14,7 +14,7 @@
     },
     "menuInfo": {
         "currency": {
-            "title": "分析",
+            "title": "业务",
             "icon": "fa fa-tasks",
             "child": [
                 {
@@ -28,23 +28,23 @@
                     "href": "page/technology.html",
                     "icon": "fa fa-stack-overflow",
                     "target": "_self"
-                },
-                {
-                    "title": "图标选择",
-                    "href": "page/demo/icon.html",
-                    "icon": "fa fa-adn",
-                    "target": "_self"
                 }
             ]
         },
         "component": {
-            "title": "公告",
-            "icon": "fa fa-bullhorn",
+            "title": "网站数据",
+            "icon": "fa fa-database",
             "child": [
                 {
-                    "title": "开始",
-                    "href": "page/welcome.html",
-                    "icon": "fa fa-pie-chart",
+                    "title": "数据展示",
+                    "href": "page/data-show.html",
+                    "icon": "fa fa-dashboard",
+                    "target": "_self"
+                },
+                {
+                    "title": "font-awesome图标库",
+                    "href": "page/demo/icon.html",
+                    "icon": "fa fa-adn",
                     "target": "_self"
                 }
             ]

@@ -33,28 +33,19 @@ import com.mongodb.client.result.UpdateResult;
  *
  */
 @Component
-public class TechnologyDaoImpl implements ITechnologyDao {
+public class TechnologyDaoImpl extends MongoTemplateDaoImpl<Technology> implements ITechnologyDao {
 
-	@Autowired
-	private MongoTemplate mongoTemplate;
-	private String collectionName="technology";
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Override
-	public List<Technology> findAll() {
-		return mongoTemplate.findAll(Technology.class, collectionName);
-	}
-
-	@Override
-	public void insert(Technology technology) throws DuplicateKeyException {
-		mongoTemplate.insert(technology, collectionName);
-	}
+//	@Override
+//	public void insert(Technology technology) throws DuplicateKeyException {
+//		mongoTemplate.insert(technology, collectionName);
+//	}
 
 	@Override
 	public List<String> findAllType() {
 		Query query=new Query();
 		query.fields().include("type");
-		List<Technology> technologies=mongoTemplate.find(query,Technology.class,collectionName);
+		List<Technology> technologies=mongoTemplate.find(query,Technology.class,getCollectionName());
 		//只取type
 		List<String> types=new ArrayList<>();
 		technologies.forEach(t->{
@@ -68,14 +59,14 @@ public class TechnologyDaoImpl implements ITechnologyDao {
 	@Override
 	public List<Technology> findByType(String type) {
 		List<Technology> technologies = mongoTemplate.find(Query.query(Criteria.where("type").regex("^"+type+"$","i")),
-				Technology.class, collectionName);
+				Technology.class, getCollectionName());
 		return technologies;
 	}
 	
 	@Override
 	public List<Technology> findByName(String name) {
 		List<Technology> technologies = mongoTemplate.find(Query.query(Criteria.where("name").regex("^"+name+"$","i")),
-				Technology.class, collectionName);
+				Technology.class, getCollectionName());
 		return technologies;
 	}
 
@@ -84,7 +75,7 @@ public class TechnologyDaoImpl implements ITechnologyDao {
 		//模糊匹配，不区分大小写
 		Pattern pattern = Pattern.compile("^.*"+name+".*$", Pattern.CASE_INSENSITIVE);
 		List<Technology> technologies = mongoTemplate.find(Query.query(Criteria.where("name").regex(pattern)),
-				Technology.class, collectionName);
+				Technology.class, getCollectionName());
 		return technologies;
 	}
 
@@ -100,7 +91,7 @@ public class TechnologyDaoImpl implements ITechnologyDao {
 		Criteria aliasCriatira=alias==null||"".equals(alias)?new Criteria():Criteria.where("aliases").regex("^.*"+alias+".*$","i");
 		//并联多条件
 		criatira.andOperator(typeCriatira,nameCriatira,aliasCriatira);
-		List<Technology> technologies = mongoTemplate.find(Query.query(criatira),Technology.class, collectionName);
+		List<Technology> technologies = mongoTemplate.find(Query.query(criatira),Technology.class, getCollectionName());
 		return technologies;
 	}
 
@@ -108,13 +99,13 @@ public class TechnologyDaoImpl implements ITechnologyDao {
 	public List<Technology> findByTypeAndName(String type, String name) {
 		Criteria criatira = new Criteria();
 		criatira.andOperator(Criteria.where("type").regex(type,"i"),Criteria.where("name").regex(name,"i"));
-		List<Technology> technologies = mongoTemplate.find(Query.query(criatira),Technology.class, collectionName);
+		List<Technology> technologies = mongoTemplate.find(Query.query(criatira),Technology.class, getCollectionName());
 		return technologies;
 	}
 
 	@Override
 	public List<Technology> findByAlias(String alias) {
-		return mongoTemplate.find(Query.query(Criteria.where("aliases").regex("^"+alias+"$","i")),Technology.class, collectionName);
+		return mongoTemplate.find(Query.query(Criteria.where("aliases").regex("^"+alias+"$","i")),Technology.class, getCollectionName());
 	}
 
 	@Override
@@ -123,13 +114,13 @@ public class TechnologyDaoImpl implements ITechnologyDao {
 		Update update=new Update().push("aliases", alias);
 		criatira.andOperator(Criteria.where("type").is(type),Criteria.where("name").is(name));
 		Query query=new Query(criatira);
-		UpdateResult updateResult=mongoTemplate.updateFirst(query,update,collectionName);
+		UpdateResult updateResult=mongoTemplate.updateFirst(query,update,getCollectionName());
 		return updateResult.wasAcknowledged();
 	}
 
 	@Override
 	public long count() {
-		return mongoTemplate.count(Query.query(Criteria.where("id")),Technology.class,collectionName);
+		return findAll().size();
 	}
 
 }

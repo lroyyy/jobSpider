@@ -1,4 +1,4 @@
-<div class="layuimini-container">
+<div class="layuimini-container layui-anim layui-anim-upbit" >
     <div class="layuimini-main">
         <fieldset class="layui-elem-field">
             <legend>新增</legend>
@@ -107,7 +107,7 @@
                     { field: 'type', width: "20%", title: '类别', sort: true },
                     { field: 'name', width: "20%", title: '名称', sort: true },
                     { field: 'aliases', width: "50%", title: '别名', sort: true },
-                    { title: '操作', minWidth: "10%", templet: '#currentTableBar', align: "center" }
+                    { title: '操作', width: "10%", templet: '#currentTableBar', align: "center" }
                 ]]
                  ,limits: [10, 15, 20, 25, 50, 75,100],
                  limit: 25,
@@ -216,10 +216,11 @@
             console.log("obj：" + JSON.stringify(obj));
             if (obj.event === "add-alias") {
                 layer.prompt({
-                    formType: 2,
+                    // formType: 2,
                     value: "",
-                    title: "新增别名",
-                    area: ['150px', '25px'] //自定义文本域宽高
+                    title: "新增的别名不能与任意技术的名称或别名相同！",
+                    maxlength: "20",
+                    area: ['230px', '25px'] //自定义文本域宽高
                 }, function (value, index, elem) {
                     layer.close(index);
                     const newAlias = value;

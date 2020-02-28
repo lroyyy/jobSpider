@@ -100,6 +100,8 @@ layui.define(["element", "jquery", "layer"], function (exports) {
              * @param title 页面标题
              */
             this.initPageTitle = function (href, title) {
+                var hrefArr = href.split("?");
+                if (hrefArr.length >= 2) href = hrefArr[0];
                 window.pageHeader = (title == undefined || title == '' || title == null) ? [] : [title];
                 $("[data-one-page]").each(function () {
                     if ($(this).attr("data-one-page") == href) {
@@ -120,7 +122,6 @@ layui.define(["element", "jquery", "layer"], function (exports) {
                                     pageHeader.push(moduleTile);
                                     $(".layui-header-menu li").attr('class', 'layui-nav-item');
                                     $("#" + moduleId + "HeaderId").addClass("layui-this");
-                                    // $(".layuimini-left-ul").removeClass('layui-this');
                                     $(".layui-left-nav-tree").attr('class', 'layui-nav layui-nav-tree layui-left-nav-tree layui-hide');
                                     $("#" + moduleId).attr('class', 'layui-nav layui-nav-tree layui-left-nav-tree layui-this');
                                 }
@@ -255,7 +256,7 @@ layui.define(["element", "jquery", "layer"], function (exports) {
                                         html += '<a href="javascript:;" class="layui-menu-tips" ><i class="' + childMenu.icon + '"></i><span class="layui-left-nav"> ' + childMenu.title + '</span></a>';
                                         html = buildChildHtml(html, childMenu.child, menuParameId);
                                     } else {
-                                        html += '<a href="javascript:;" class="layui-menu-tips" data-type="tabAdd"  data-one-page-mpi="m-p-i-' + menuParameId + '" data-one-page="' + childMenu.href + '" target="' + childMenu.target + '"><i class="' + childMenu.icon + '"></i><span class="layui-left-nav"> ' + childMenu.title + '</span></a>\n';
+                                        html += '<a href="javascript:;" class="layui-menu-tips" data-type="tabAdd"  data-mpi="m-p-i-' + menuParameId + '" data-one-page="' + childMenu.href + '" target="' + childMenu.target + '"><i class="' + childMenu.icon + '"></i><span class="layui-left-nav"> ' + childMenu.title + '</span></a>\n';
                                         menuParameId++;
                                         window.menuParameId = menuParameId;
                                     }
@@ -266,7 +267,7 @@ layui.define(["element", "jquery", "layer"], function (exports) {
                             };
                             leftMenuHtml = buildChildHtml(leftMenuHtml, menu.child, menuParameId);
                         } else {
-                            leftMenuHtml += '<a href="javascript:;" class="layui-menu-tips"  data-type="tabAdd" data-one-page-mpi="m-p-i-' + menuParameId + '" data-one-page="' + menu.href + '" target="' + menu.target + '"><i class="' + menu.icon + '"></i><span class="layui-left-nav"> ' + menu.title + '</span></a>\n';
+                            leftMenuHtml += '<a href="javascript:;" class="layui-menu-tips"  data-type="tabAdd" data-mpi="m-p-i-' + menuParameId + '" data-one-page="' + menu.href + '" target="' + menu.target + '"><i class="' + menu.icon + '"></i><span class="layui-left-nav"> ' + menu.title + '</span></a>\n';
                             menuParameId++;
                         }
                         leftMenuHtml += '</li>\n';
@@ -437,7 +438,7 @@ layui.define(["element", "jquery", "layer"], function (exports) {
              * @returns {boolean}
              */
             this.href = function (href, title) {
-                layuimini.initPageTitle(href,title);
+                layuimini.initPageTitle(href, title);
                 layuimini.initConten(href);
                 layuimini.initDevice();
             };
@@ -513,6 +514,92 @@ layui.define(["element", "jquery", "layer"], function (exports) {
                 return layer.msg(title, {icon: 2, shade: this.shade, scrollbar: false, time: 3000, shadeClose: true});
             };
 
+            /**
+             * 进入全屏
+             */
+            this.fullScreen = function () {
+                var el = document.documentElement;
+                var rfs = el.requestFullScreen || el.webkitRequestFullScreen;
+                if (typeof rfs != "undefined" && rfs) {
+                    rfs.call(el);
+                } else if (typeof window.ActiveXObject != "undefined") {
+                    var wscript = new ActiveXObject("WScript.Shell");
+                    if (wscript != null) {
+                        wscript.SendKeys("{F11}");
+                    }
+                } else if (el.msRequestFullscreen) {
+                    el.msRequestFullscreen();
+                } else if (el.oRequestFullscreen) {
+                    el.oRequestFullscreen();
+                } else {
+                    layuimini.msg_error('浏览器不支持全屏调用！');
+                }
+            };
+
+            /**
+             * 退出全屏
+             */
+            this.exitFullScreen = function () {
+                var el = document;
+                var cfs = el.cancelFullScreen || el.webkitCancelFullScreen || el.exitFullScreen;
+                if (typeof cfs != "undefined" && cfs) {
+                    cfs.call(el);
+                } else if (typeof window.ActiveXObject != "undefined") {
+                    var wscript = new ActiveXObject("WScript.Shell");
+                    if (wscript != null) {
+                        wscript.SendKeys("{F11}");
+                    }
+                } else if (el.msExitFullscreen) {
+                    el.msExitFullscreen();
+                } else if (el.oRequestFullscreen) {
+                    el.oCancelFullScreen();
+                } else {
+                    layuimini.msg_error('浏览器不支持全屏调用！');
+                }
+            };
+
+            /**
+             * 获取指定链接内容
+             * @param href
+             * @returns {string}
+             */
+            this.getHrefContent = function (href) {
+                var content = '';
+                var v = new Date().getTime();
+                $.ajax({
+                    url: href.indexOf("?") > -1 ? href + '&v=' + v : href + '?v=' + v,
+                    type: 'get',
+                    dataType: 'html',
+                    async: false,
+                    success: function (data) {
+                        content = data;
+                    },
+                    error: function (xhr, textstatus, thrown) {
+                        return layuimini.msg_error('Status:' + xhr.status + '，' + xhr.statusText + '，请稍后再试！');
+                    }
+                });
+                return content;
+            };
+
+            /**
+             * 获取弹出层的宽高
+             * @returns {*[]}
+             */
+            this.getOpenWidthHeight = function () {
+                if (layuimini.checkMobile()) {
+                    var clienWidth = $(".layuimini-content-page").outerWidth(true)-10;
+                    var clientHeight = (document.documentElement.clientHeight) - 60-10;
+                    var offsetLeft = 5;
+                    var offsetTop = 60+5;
+                } else {
+                    var clienWidth = $(".layuimini-content-page").outerWidth(true) - 10;
+                    var clientHeight = (document.documentElement.clientHeight) - 95 - 10;
+                    var offsetLeft = $(".layui-left-nav-tree").width() + 5;
+                    var offsetTop = 95 + 5;
+                }
+                return [clienWidth,clientHeight , offsetTop, offsetLeft];
+            }
+
         };
 
         /**
@@ -527,6 +614,17 @@ layui.define(["element", "jquery", "layer"], function (exports) {
                 window.open(href, "_blank");
                 return false;
             }
+
+            // 拼接参数
+            if (layuimini.config('urlSuffixDefault')) {
+                var menuParameId = $(this).attr('data-mpi');
+                if (href.indexOf("?") > -1) {
+                    href = href + '&mpi=' + menuParameId;
+                } else {
+                    href = href + '?mpi=' + menuParameId;
+                }
+            }
+
             layuimini.hash(href);
             layer.close(loading);
         });
@@ -648,7 +746,7 @@ layui.define(["element", "jquery", "layer"], function (exports) {
          */
         $('body').on('click', '[data-bgcolor]', function () {
             var loading = layer.load(0, {shade: false, time: 2 * 1000});
-            var clientHeight = (document.documentElement.clientHeight) - 95;
+            var clientHeight = (document.documentElement.clientHeight) - 60;
             var bgColorHtml = layuimini.buildBgColorHtml();
             var html = '<div class="layuimini-color">\n' +
                 '<div class="color-title">\n' +
@@ -685,6 +783,22 @@ layui.define(["element", "jquery", "layer"], function (exports) {
             $(this).attr('class', 'layui-this');
             sessionStorage.setItem('layuiminiBgcolorId', bgcolorId);
             layuimini.initBgColor();
+        });
+
+        /**
+         * 全屏
+         */
+        $('body').on('click', '[data-check-screen]', function () {
+            var check = $(this).attr('data-check-screen');
+            if (check == 'full') {
+                layuimini.fullScreen();
+                $(this).attr('data-check-screen', 'exit');
+                $(this).html('<i class="fa fa-compress"></i>');
+            } else {
+                layuimini.exitFullScreen();
+                $(this).attr('data-check-screen', 'full');
+                $(this).html('<i class="fa fa-arrows-alt"></i>');
+            }
         });
 
         exports("layuimini", layuimini);
