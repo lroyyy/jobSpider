@@ -119,7 +119,7 @@ public class TechnologyDaoImpl extends MongoTemplateDaoImpl<Technology> implemen
 	}
 
 	@Override
-	public long count() {
+	public Integer count() {
 		return findAll().size();
 	}
 

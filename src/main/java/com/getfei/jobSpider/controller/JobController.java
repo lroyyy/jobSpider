@@ -32,7 +32,7 @@ public class JobController extends BaseController {
 	private IAnalysisResultService analysisResultService;
 
 	@GetMapping()
-	public ResponseResult<AnalysisResult> list(@RequestParam("keyword") String keyword,
+	public ResponseResult<AnalysisResult> list(@RequestParam("ip") String ip,@RequestParam("keyword") String keyword,
 			@RequestParam("position") String position, @RequestParam(name = "way", required = false) String way) {
 		AnalysisResult analysisResult = null;
 		ResponseResult<AnalysisResult> rr = new ResponseResult<>();
@@ -57,7 +57,6 @@ public class JobController extends BaseController {
 			}
 		} catch (Exception e) {
 			logger.warn("报错！信息："+e.getMessage());
-			e.printStackTrace();
 			rr.setState(ERROR);
 			rr.setMessage(e.getMessage());
 			return rr;

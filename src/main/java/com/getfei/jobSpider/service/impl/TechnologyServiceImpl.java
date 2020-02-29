@@ -130,7 +130,7 @@ public class TechnologyServiceImpl implements ITechnologyService {
 	}
 
 	@Override
-	public long count() {
+	public Integer count() {
 		return technologyDao.count();
 	}
 

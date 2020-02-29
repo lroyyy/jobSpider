@@ -8,7 +8,7 @@ public interface ILogService {
 	void add(Log log);
 	
 	/**根据类型统计*/
-	long countByType(String type);
+	Integer countByType(String type);
 	
 	/**清空日志*/
 	void clear();

@@ -23,9 +23,10 @@ public class LogDaoImpl implements ILogDao{
 	}
 
 	@Override
-	public long countByType(String type) {
-		long count=mongoTemplate.count(Query.query(Criteria.where("type").is(type)),Log.class, collectionName);
-		return count;
+	public Integer countByType(String type) {
+		Long count=mongoTemplate.count(Query.query(Criteria.where("type").is(type)),Log.class, collectionName);
+		Integer returnValue=count.intValue();
+		return returnValue;
 	}
 
 	@Override

@@ -50,16 +50,15 @@
 </div>
 
 <script>
-    layui.use(['form', 'layedit', 'laydate', 'jquery'], function () {
+    layui.use(['form', 'jquery','echarts'], function () {
         var form = layui.form,
             layer = layui.layer,
-            layedit = layui.layedit,
-            laydate = layui.laydate,
-            // echarts = layui.echarts
+            echarts = layui.echarts
             $ = layui.$;
         let pieChart, wordCloudChart;
         let provinces = [];
         let currentAjax = null;
+        const ip = returnCitySN["cip"];
 
         var loader = { //读取层
             ui: null,
@@ -146,20 +145,19 @@
 
         //新增访问日志
         const addVisitLog = function () {
-            const ip=returnCitySN["cip"];
-            if(!ip){
+            if (!ip) {
                 console.log("ip获取失败。");
                 return;
             }
             $.ajax({
                 type: "post",
                 url: "/" + projectName + "/log/visitLog",
-                data: "ip="+ip,
+                data: "ip=" + ip,
                 dataType: "json",
                 success: function (response) {
-                    if(response.state==200){
+                    if (response.state == 200) {
                         console.log("访问日志写入成功。");
-                    }else{
+                    } else {
                         console.log("访问日志写入失败。");
                     }
                 }
@@ -173,8 +171,8 @@
             $("#div-chart").show();
             initPie(data);
             //显示词云
-            $("#div-wordcloud").show();
-            initWordCloud(data);
+            // $("#div-wordcloud").show();
+            // initWordCloud(data);
         }
 
         /**展示全新结果*/
@@ -182,7 +180,7 @@
             currentAjax = $.ajax({
                 type: "get",
                 url: "/" + projectName + "/job",
-                data: "keyword=" + keyword + "&position=" + position + "&way=getNew",
+                data: "ip=" + ip + "&keyword=" + keyword + "&position=" + position + "&way=getNew",
                 dataType: "json",
                 success: function (response) {
                     if (response.state == 200) { //返回有效结果
@@ -222,7 +220,7 @@
             $.ajax({
                 type: "get",
                 url: "/" + projectName + "/job",
-                data: "keyword=" + keyword + "&position=" + position,
+                data: "ip=" + ip + "&keyword=" + keyword + "&position=" + position,
                 dataType: "json",
                 success: function (response) {
                     // console.log("state=" + response.state);
@@ -230,7 +228,7 @@
                         // console.log("response.data.ifNew=" + response.data.ifNew);
                         if (response.data.ifNew) { //第一次查询
                             layer.msg("本次结果共有" + response.data.totalPage + "页，预计耗时" +
-                                response.data.totalPage + "秒...");
+                                response.data.totalPage*2 + "秒...");
                             getAndShowNewResult(keyword, position);
                         } else {
                             loader.close();
@@ -261,7 +259,7 @@
                     loader.close();
                     layer.alert("抱歉，请求失败！以下是错误信息：\n当前状态：" + jqXHR.readyState +
                         "；\nHTTP状态码：" + jqXHR.status + "；\n状态码错误信息：" + jqXHR
-                        .statusText + "；\n状态：" + textStatus);
+                            .statusText + "；\n状态：" + textStatus);
                 }
             });
             return false;
@@ -325,12 +323,22 @@
 
                         label: {
                             normal: {
-                                position: 'inner'
+                                position: 'inner',
+                                textStyle: {
+                                    fontSize: "120%"
+                                }
                             }
                         },
                         labelLine: {
                             normal: {
                                 show: false
+                            }
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
                             }
                         },
                         data: data.technologyTypeCounter
@@ -387,6 +395,13 @@
                                         borderRadius: 2
                                     }
                                 }
+                            }
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
                             }
                         },
                         data: data.technologyCounter

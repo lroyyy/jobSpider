@@ -37,6 +37,6 @@ public interface ITechnologyDao {
 	boolean insertAlias(String type,String name,String alias);
 	
 	/**统计*/
-	long count();
+	Integer count();
 	
 }

@@ -89,11 +89,4 @@ public class TechnologyController extends BaseController {
 		return rs;
 	}
 
-	@GetMapping("count")
-	public ResponseResult<Long> count(){
-		ResponseResult<Long> rr=new ResponseResult<>(SUCCESS);
-		Long count=technologyService.count();
-		rr.setData(count);
-		return rr;
-	}
 }

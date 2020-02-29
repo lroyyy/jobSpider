@@ -19,7 +19,7 @@ public class LogServiceImpl implements ILogService{
 	}
 
 	@Override
-	public long countByType(String type) {
+	public Integer countByType(String type) {
 		return logDao.countByType(type);
 	}
 

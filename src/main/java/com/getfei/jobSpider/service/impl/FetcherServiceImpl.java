@@ -73,7 +73,7 @@ public class FetcherServiceImpl implements IFetcherService {
 				//爬取本页所有链接
 				for (Element e : es) {
 					String jobTitle=e.attr("title");
-					if(jobTitle!=null&&!jobTitle.contains(keyword)) {
+					if(jobTitle!=null&&!jobTitle.toLowerCase().contains(keyword.toLowerCase())) {//过滤不含关键字的岗位（忽略大小写）
 						continue;
 					}
 					String url = e.attr("href");
