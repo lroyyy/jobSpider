@@ -7,7 +7,7 @@ import com.getfei.jobSpider.entity.FetchedResult;
 import com.getfei.jobSpider.entity.Job;
 import com.getfei.jobSpider.service.IJobService;
 
-public class JobServiceImpl implements IJobService{
+public class JobServiceImpl extends BaseServiceImpl implements IJobService{
 
 	@Override
 	public FetchedResult fetchJobs(String keyword, String positionCode) throws Exception {

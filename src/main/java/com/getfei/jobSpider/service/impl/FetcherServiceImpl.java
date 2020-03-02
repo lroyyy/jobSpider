@@ -23,7 +23,7 @@ import com.getfei.jobSpider.service.ex.EmptyFetchedResultException;
 import com.getfei.jobSpider.service.ex.NoSuchPositionException;
 
 @Service
-public class FetcherServiceImpl implements IFetcherService {
+public class FetcherServiceImpl extends BaseServiceImpl implements IFetcherService {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 

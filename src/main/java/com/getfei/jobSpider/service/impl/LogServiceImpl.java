@@ -8,7 +8,7 @@ import com.getfei.jobSpider.entity.Log;
 import com.getfei.jobSpider.service.ILogService;
 
 @Service
-public class LogServiceImpl implements ILogService{
+public class LogServiceImpl extends BaseServiceImpl implements ILogService{
 
 	@Autowired
 	private ILogDao logDao;

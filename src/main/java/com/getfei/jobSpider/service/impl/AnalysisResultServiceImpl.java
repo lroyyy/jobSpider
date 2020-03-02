@@ -1,7 +1,5 @@
 package com.getfei.jobSpider.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +8,7 @@ import com.getfei.jobSpider.entity.AnalysisResult;
 import com.getfei.jobSpider.service.IAnalysisResultService;
 
 @Service
-public class AnalysisResultServiceImpl implements IAnalysisResultService{
+public class AnalysisResultServiceImpl extends BaseServiceImpl implements IAnalysisResultService{
 
 	@Autowired
 	private IAnalysisResultDao analysisResultDao;

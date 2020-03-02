@@ -21,9 +21,8 @@ import com.getfei.jobSpider.service.IAnalyzerService;
 import com.getfei.jobSpider.util.data.EchartsData;
 
 @Service
-public class AnalyzerServiceImpl implements IAnalyzerService {
+public class AnalyzerServiceImpl extends BaseServiceImpl implements IAnalyzerService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	private Map<Technology, Integer> technologyCounter;
 	
 	public void initTechnologyCounter() {

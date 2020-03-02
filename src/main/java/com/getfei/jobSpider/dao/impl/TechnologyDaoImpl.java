@@ -35,12 +35,6 @@ import com.mongodb.client.result.UpdateResult;
 @Component
 public class TechnologyDaoImpl extends MongoTemplateDaoImpl<Technology> implements ITechnologyDao {
 
-
-//	@Override
-//	public void insert(Technology technology) throws DuplicateKeyException {
-//		mongoTemplate.insert(technology, collectionName);
-//	}
-
 	@Override
 	public List<String> findAllType() {
 		Query query=new Query();

@@ -7,9 +7,15 @@ import org.slf4j.LoggerFactory;
  * Service实现类的基类
  * @author lroy
  *
+ * 已实现方法：
  */
-public class BaseServiceImpl {
+public class BaseServiceImpl<T> {
 	
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+	protected 
+	
+	public void add(T t) {
+		
+	}
 
 }

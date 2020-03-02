@@ -19,9 +19,7 @@ import com.getfei.jobSpider.entity.Positions;
 import com.getfei.jobSpider.service.IPositionService;
 
 @Service
-public class PositionServiceImpl implements IPositionService {
-
-	public static Logger logger = LoggerFactory.getLogger(PositionServiceImpl.class);
+public class PositionServiceImpl extends BaseServiceImpl implements IPositionService {
 
 	@Autowired
 	private IPositionDao positionDao;
