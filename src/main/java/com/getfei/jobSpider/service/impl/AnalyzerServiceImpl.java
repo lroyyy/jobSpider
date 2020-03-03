@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.getfei.jobSpider.entity.AnalysisResult;
@@ -21,7 +19,7 @@ import com.getfei.jobSpider.service.IAnalyzerService;
 import com.getfei.jobSpider.util.data.EchartsData;
 
 @Service
-public class AnalyzerServiceImpl extends BaseServiceImpl implements IAnalyzerService {
+public class AnalyzerServiceImpl extends CommonServiceImpl implements IAnalyzerService {
 
 	private Map<Technology, Integer> technologyCounter;
 	
@@ -48,14 +46,11 @@ public class AnalyzerServiceImpl extends BaseServiceImpl implements IAnalyzerSer
 			// 遍历technologyMapping，找出匹配的technology
 			Technologies.technologyMapping.forEach((key, technology) -> {
 				boolean finded=false;
-//				logger.info("包含"+technology.getName()+"?");
 				if(jobMessage.toLowerCase().contains(technology.getName().toLowerCase())) {
-//					logger.info("包含"+technology.getName());
 					finded=true;
 				}else {
 					for (String aliase : technology.getAliases()) {// 遍历别名集
 						if(jobMessage.toLowerCase().contains(aliase.toLowerCase())) {
-//							logger.info("包含"+aliase);
 							finded=true;
 						}
 					}
@@ -63,16 +58,7 @@ public class AnalyzerServiceImpl extends BaseServiceImpl implements IAnalyzerSer
 				if(finded) {
 					Integer newCount = technologyCounter.get(technology) + 1;
 					technologyCounter.put(Technologies.technologyMapping.get(key), newCount);
-//					logger.info("找到" + technology.getName() + "，新次数=" + newCount);
 				}
-//				for (String aliase : technology.getAliases()) {// 遍历别名集
-//					if (jobMessage.toLowerCase().contains(aliase.toLowerCase())) {// 匹配，更新次数
-//						Integer newCount = technologyCounter.get(technology) + 1;
-//						technologyCounter.put(Technologies.technologyMapping.get(key), newCount);
-//						logger.info("找到" + aliase + "，新次数=" + newCount);
-//						break;
-//					}
-//				}
 			});
 		}
 		// 移除次数为0的技术
@@ -83,12 +69,9 @@ public class AnalyzerServiceImpl extends BaseServiceImpl implements IAnalyzerSer
 		technologyCounter.forEach((technology, count) -> {
 			String technologyType = technology.getType();
 			if (technologyTypeCounter.containsKey(technologyType)) {// 类型已有
-//				logger.info(technologyType + "已存在，且count=" + technologyTypeCounter.get(technologyType)
-//						+ "，准备加" + count);
 				int newCount = technologyTypeCounter.get(technologyType) + count;
 				technologyTypeCounter.put(technologyType, newCount);
 			} else {// 类型未有
-//				logger.info(technologyType + "不存在，count初始化为" + count);
 				technologyTypeCounter.put(technologyType, count);
 			}
 		});
@@ -112,12 +95,10 @@ public class AnalyzerServiceImpl extends BaseServiceImpl implements IAnalyzerSer
 		analysisResult.setPosition(fetchedResult.getPosition());
 		analysisResult.setTechnologyCounter(technologyCounterEchartsData);
 		analysisResult.setTechnologyTypeCounter(technologyTypeCounterEchartsData);
+		//日志
 		logger.info("爬取Job总数：" + fetchedResult.getTotal());
 		logger.info("爬取成功数：" + fetchedResult.getSuccessCount());
 		logger.info("爬取失败数：" + fetchedResult.getFailureCount());
-		// for (Entry<Technology, Integer> entry : technologyCounterList) {
-		// logger.info(entry.getKey() + " --- " + entry.getValue());
-		// }
 		sortedTechnologyCounter.forEach((key, value) -> {
 			logger.info(key + " --- " + value);
 		});

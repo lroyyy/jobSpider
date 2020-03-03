@@ -15,22 +15,22 @@ public interface ITechnologyDao {
 	/**查询所有类型*/
 	List<String> findAllType();
 	
-	/**根据类型查询*/
+	/**根据类型查询（大小写不敏感）*/
 	List<Technology> findByType(String type);
 	
-	/**根据名称查询*/
+	/**根据名称查询（大小写不敏感）*/
 	List<Technology> findByName(String name);
 	
 	/**根据名称模糊查询*/
 	List<Technology> findByNameLike(String name);
 	
-	/**根据类型（精确）和名称（模糊）和别名（模糊）查询*/
+	/**根据类型（精确）和名称（模糊）和别名（模糊）查询（大小写不敏感）*/
 	List<Technology> findByTypeAndNameLikeAndAliasLike(String type,String name,String alias);
 	
-	/**根据类型和名称查询*/
+	/**根据类型和名称查询（大小写不敏感）*/
 	List<Technology> findByTypeAndName(String type,String name);
 	
-	/**根据别名查询*/
+	/**根据别名查询（大小写不敏感）*/
 	List<Technology> findByAlias(String alias);
 	
 	/**新增别名*/

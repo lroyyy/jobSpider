@@ -51,7 +51,7 @@ public class TechnologyController extends BaseController {
 	public ResponseResult<List<Technology>> add(@RequestParam("name") String name, @RequestParam("type") String type,
 			@RequestParam(name = "alias", required = false) String aliasStr) {
 		String[] aliases = !"".equals(aliasStr) ? aliasStr.split(",") : null;
-		MongoResult mongoResult = technologyService.add(name, type, aliases);
+		MongoResult mongoResult = technologyService.save(name, type, aliases);
 		Integer state = mongoResult.isSuccess() ? SUCCESS : ERROR;
 		ResponseResult<List<Technology>> rs = new ResponseResult<>(state);
 		if (state == ERROR) {

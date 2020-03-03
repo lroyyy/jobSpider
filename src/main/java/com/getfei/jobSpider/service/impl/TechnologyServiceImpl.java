@@ -3,11 +3,8 @@ package com.getfei.jobSpider.service.impl;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +15,14 @@ import com.getfei.jobSpider.service.ITechnologyService;
 import com.getfei.jobSpider.util.MongoResult;
 
 @Service
-public class TechnologyServiceImpl implements ITechnologyService {
-
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+public class TechnologyServiceImpl extends MongoBaseServiceImpl<Technology> implements ITechnologyService {
 
 	@Autowired
 	private ITechnologyDao technologyDao;
 
 	@Override
 	public List<Technology> list() {
-		List<Technology> technologies=technologyDao.findAll();
+		List<Technology> technologies=super.list();
 		//排序，先看type后看name
 		technologies=technologies.stream().sorted(
 				Comparator.comparing(Technology::getType).thenComparing(Technology::getName)).collect(Collectors.toList());
@@ -45,7 +40,7 @@ public class TechnologyServiceImpl implements ITechnologyService {
 	}
 
 	@Override
-	public MongoResult add(String name, String type, String[] aliases) {
+	public MongoResult save(String name, String type, String[] aliases) {
 		MongoResult mongoResult = new MongoResult();
 		logger.info("preAdd:name=" + name + ",type=" + type + ",aliases=" + Arrays.toString(aliases));
 		// 新增技术的名称和已有技术的名称相同
@@ -131,7 +126,7 @@ public class TechnologyServiceImpl implements ITechnologyService {
 
 	@Override
 	public Integer count() {
-		return technologyDao.count();
+		return super.count();
 	}
 
 }

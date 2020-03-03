@@ -2,29 +2,16 @@ package com.getfei.jobSpider.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import com.getfei.jobSpider.dao.ITechnologyDao;
-import com.getfei.jobSpider.entity.Position;
 import com.getfei.jobSpider.entity.Technology;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.mongodb.DuplicateKeyException;
 import com.mongodb.client.result.UpdateResult;
 
 /**
@@ -110,11 +97,6 @@ public class TechnologyDaoImpl extends MongoTemplateDaoImpl<Technology> implemen
 		Query query=new Query(criatira);
 		UpdateResult updateResult=mongoTemplate.updateFirst(query,update,getCollectionName());
 		return updateResult.wasAcknowledged();
-	}
-
-	@Override
-	public Integer count() {
-		return findAll().size();
 	}
 
 }

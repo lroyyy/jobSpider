@@ -17,7 +17,7 @@ public interface ITechnologyService {
 	List<Technology> getByNameLike(String name);
 	
 	/** 新增	 */
-	MongoResult add(String name,String type,String[] aliases);
+	MongoResult save(String name,String type,String[] aliases);
 	
 	/**查询所有类型*/
 	List<String> ListType();
@@ -28,6 +28,7 @@ public interface ITechnologyService {
 	/**新增别名*/
 	MongoResult addAlias(String name,String type,String alias);
 	
+	/**统计技术个数*/
 	Integer count();
 	
 }

@@ -5,7 +5,7 @@ import com.getfei.jobSpider.entity.Log;
 public interface ILogService {
 
 	/**写入日志*/
-	void add(Log log);
+	void save(Log log);
 	
 	/**根据类型统计*/
 	Integer countByType(String type);

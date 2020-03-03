@@ -43,7 +43,7 @@ public class DataStatisticianAspect {
 		log.setType("analysis");
 		log.setKeyword(keyword);
 		log.setPosition(position);
-		logService.add(log);
+		logService.save(log);
 		return rr;
 	}
 

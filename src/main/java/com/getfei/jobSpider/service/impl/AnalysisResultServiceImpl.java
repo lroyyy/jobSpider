@@ -8,29 +8,19 @@ import com.getfei.jobSpider.entity.AnalysisResult;
 import com.getfei.jobSpider.service.IAnalysisResultService;
 
 @Service
-public class AnalysisResultServiceImpl extends BaseServiceImpl implements IAnalysisResultService{
+public class AnalysisResultServiceImpl extends MongoBaseServiceImpl<AnalysisResult> implements IAnalysisResultService{
 
 	@Autowired
 	private IAnalysisResultDao analysisResultDao;
 	
-	@Override
-	public void insert(AnalysisResult analysisResult) {
-		analysisResultDao.save(analysisResult);
-	}
-
 	@Override
 	public AnalysisResult getByKeywordAndPosition(String keyword, String position) {
 		return analysisResultDao.findByKeywordAndPosition(keyword, position);
 	}
 
 	@Override
-	public void delete(AnalysisResult analysisResult) {
-		analysisResultDao.delete(analysisResult);
-	}
-
-	@Override
-	public void clear() {
-		analysisResultDao.truncate();
+	public void remove(AnalysisResult analysisResult) {
+		super.remove(analysisResult);
 	}
 
 }

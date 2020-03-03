@@ -19,7 +19,7 @@ import com.getfei.jobSpider.entity.Positions;
 import com.getfei.jobSpider.service.IPositionService;
 
 @Service
-public class PositionServiceImpl extends BaseServiceImpl implements IPositionService {
+public class PositionServiceImpl extends MongoBaseServiceImpl<Position> implements IPositionService {
 
 	@Autowired
 	private IPositionDao positionDao;
@@ -30,7 +30,7 @@ public class PositionServiceImpl extends BaseServiceImpl implements IPositionSer
 		List<Position> positions=Positions.getList();
 		if(positions==null) {
 			logger.warn("获取positions时警告：Positions里找不到，去数据库里找。");
-			positions=positionDao.findAll();
+			positions=super.list();
 		}
 		return positions;
 	}
@@ -97,17 +97,15 @@ public class PositionServiceImpl extends BaseServiceImpl implements IPositionSer
 
 	@Override
 	public List<Position> listStructured() {
-		List<Position> positions=positionDao.findAll();
+		List<Position> positions=super.list();
 		List<Position> provinces=new ArrayList<>();
 		positions.forEach(position->{
 			if(position.getCode().endsWith("0000")) {//筛选出省
 				provinces.add(position);
 				String head=position.getCode().substring(0,2);
-//				logger.info("name="+position.getName()+",head="+head);
 				positions.forEach(p->{
 					if(!p.getCode().endsWith("0000")&&p.getCode().startsWith(head)) {
 						position.addPosition(p);
-//						logger.info("add"+p.getName()+"to"+position.getName());
 					}
 				});
 			}

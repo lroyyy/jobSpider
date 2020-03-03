@@ -4,12 +4,12 @@ import com.getfei.jobSpider.entity.AnalysisResult;
 
 public interface IAnalysisResultService {
 
-	void insert(AnalysisResult analysisResult);
+	void save(AnalysisResult analysisResult);
 	
 	AnalysisResult getByKeywordAndPosition(String keyword, String position);
 
-	void delete(AnalysisResult analysisResult);
-	
 	void clear();
+	
+	void remove(AnalysisResult analysisResult);
 	
 }

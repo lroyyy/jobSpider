@@ -26,7 +26,7 @@ public class LogController extends BaseController{
 		try {
 			Log log=new Log(ip);
 			log.setType("visit");
-			logService.add(log);
+			logService.save(log);
 			rr.setState(SUCCESS);
 		} catch (Exception e) {
 			rr.setState(ERROR);

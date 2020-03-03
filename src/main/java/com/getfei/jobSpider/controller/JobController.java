@@ -44,7 +44,7 @@ public class JobController extends BaseController {
 				analysisResult=getNew(keyword, position);
 				//删除旧结果
 				if(historicalAnalysisResult.getTechnologyCounter()!=null) {
-					analysisResultService.delete(historicalAnalysisResult);
+					analysisResultService.remove(historicalAnalysisResult);
 				}
 			}else {//优先获取已有结果
 				if (historicalAnalysisResult != null) {//返回已有结果
@@ -95,7 +95,7 @@ public class JobController extends BaseController {
 				throw new Exception("匹配不到任何技术，请编辑技术栈后再试。");
 			}
 			// 分析结果存入数据库
-			analysisResultService.insert(analysisResult);
+			analysisResultService.save(analysisResult);
 		} catch (Exception e) {
 			throw e;
 		}
