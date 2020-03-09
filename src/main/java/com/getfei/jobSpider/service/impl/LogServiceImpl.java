@@ -19,4 +19,9 @@ public class LogServiceImpl extends MongoBaseServiceImpl<Log> implements ILogSer
 		return logDao.countByType(type);
 	}
 
+	@Override
+	public Integer countTodayByType(String type) {
+		return logDao.countTodayByType(type);
+	}
+
 }

@@ -3,12 +3,11 @@ package com.getfei.jobSpider.entity;
 import java.util.Date;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 
+ * 开发日志
  * @author getfei
  *
  */

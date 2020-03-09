@@ -14,7 +14,7 @@ import com.getfei.jobSpider.dao.IMongoTemplateDao;
 
 /**
  * mongoTemplate Dao层实现类<p>
- * 默认提供CRUD操作
+ * 默认提供CRD操作
  * @author getfei
  *
  * @param <T> 实体类

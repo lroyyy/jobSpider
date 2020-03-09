@@ -1,5 +1,7 @@
 package com.getfei.jobSpider.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +15,16 @@ import com.getfei.jobSpider.service.ILogService;
 import com.getfei.jobSpider.util.ResponseResult;
 
 @RestController
-@RequestMapping("log")
+@RequestMapping("logs")
 public class LogController extends BaseController{
 	
 	@Autowired
 	private ILogService logService;
+	
+	@GetMapping()
+	public ResponseResult<List<Log>> list(){
+		return new ResponseResult<>(SUCCESS,logService.list());
+	}
 	
 	/**新增访问日志*/
 	@PostMapping("visitLog")
@@ -37,10 +44,15 @@ public class LogController extends BaseController{
 	
 	/**查询访问次数*/
 	@GetMapping("visitCount")
-	public ResponseResult<Long> getVisitCount(){
+	public ResponseResult<Long> getVisitCount(@RequestParam(name="option",required=false) String option){
 		ResponseResult<Long> rr=new ResponseResult<>();
 		try {
-			long count=logService.countByType("visit");
+			long count;
+			if(option!=null&&"today".equals(option)) {
+				count=logService.countTodayByType("visit");
+			}else {
+				count=logService.countByType("visit");
+			}
 			rr.setState(SUCCESS);
 			rr.setData(Long.valueOf(count));
 		} catch (Exception e) {

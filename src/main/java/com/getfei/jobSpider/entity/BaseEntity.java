@@ -1,7 +1,6 @@
 package com.getfei.jobSpider.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import lombok.Data;
 /**
