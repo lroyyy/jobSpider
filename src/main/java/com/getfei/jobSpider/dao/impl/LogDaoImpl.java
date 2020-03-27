@@ -1,5 +1,6 @@
 package com.getfei.jobSpider.dao.impl;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,7 +23,7 @@ public class LogDaoImpl extends MongoTemplateDaoImpl<Log> implements ILogDao{
 	public Integer countTodayByType(String type) {
 		Criteria criatira = new Criteria();
 		Criteria typeCriteria=Criteria.where("type").is(type);
-		Criteria dateCriteria=Criteria.where("date").is(new Date());
+		Criteria dateCriteria=Criteria.where("date").is(LocalDate.now());
 		criatira.andOperator(typeCriteria,dateCriteria);
 		Long count=mongoTemplate.count(Query.query(criatira),Log.class, getCollectionName());
 		return count.intValue();

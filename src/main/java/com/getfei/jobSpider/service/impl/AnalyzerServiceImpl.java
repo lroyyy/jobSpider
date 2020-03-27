@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.getfei.jobSpider.common.DataCenter;
 import com.getfei.jobSpider.entity.AnalysisResult;
 import com.getfei.jobSpider.entity.FetchedResult;
 import com.getfei.jobSpider.entity.Job;
@@ -22,42 +23,45 @@ import com.getfei.jobSpider.util.data.EchartsData;
 public class AnalyzerServiceImpl extends CommonServiceImpl implements IAnalyzerService {
 
 	private Map<Technology, Integer> technologyCounter;
-	
+
 	public void initTechnologyCounter() {
 		technologyCounter = new HashMap<>();
-		for (Technology technology : Technologies.technologyMapping.values()) {
+//		for (Technology technology : Technologies.technologyMapping.values()) {
+		for (Technology technology : DataCenter.getTechnologyMapping().values()) {
 			technologyCounter.put(technology, 0);
 		}
 	}
-	
+
 	@Override
 	public AnalysisResult analyse(FetchedResult fetchedResult) {
 		initTechnologyCounter();
 		// 遍历job，统计次数
 		for (int i = 0, size = fetchedResult.getJobs().size(); i < size; i++) {
-			Job job =fetchedResult.getJobs().get(i);
-			String url=job.getUrl();
-			String jobTitle=job.getJobTitle();
-			String salary=job.getSalary();
-			String companyName=job.getCompanyName();
+			Job job = fetchedResult.getJobs().get(i);
+			String url = job.getUrl();
+			String jobTitle = job.getJobTitle();
+			String salary = job.getSalary();
+			String companyName = job.getCompanyName();
 			String jobMessage = job.getJobMessage();
 //			logger.info("开始分析：url="+url+",职位="+jobTitle+",薪水="+salary+",公司名称="+companyName);
 //			logger.info("信息："+jobMessage);
 			// 遍历technologyMapping，找出匹配的technology
-			Technologies.technologyMapping.forEach((key, technology) -> {
-				boolean finded=false;
-				if(jobMessage.toLowerCase().contains(technology.getName().toLowerCase())) {
-					finded=true;
-				}else {
+//			Technologies.technologyMapping.forEach((key, technology) -> {
+			DataCenter.getTechnologyMapping().forEach((key, technology) -> {
+				boolean finded = false;
+				if (jobMessage.toLowerCase().contains(technology.getName().toLowerCase())) {
+					finded = true;
+				} else {
 					for (String aliase : technology.getAliases()) {// 遍历别名集
-						if(jobMessage.toLowerCase().contains(aliase.toLowerCase())) {
-							finded=true;
+						if (jobMessage.toLowerCase().contains(aliase.toLowerCase())) {
+							finded = true;
 						}
 					}
 				}
-				if(finded) {
+				if (finded) {
 					Integer newCount = technologyCounter.get(technology) + 1;
-					technologyCounter.put(Technologies.technologyMapping.get(key), newCount);
+//					technologyCounter.put(Technologies.technologyMapping.get(key), newCount);
+					technologyCounter.put(DataCenter.getTechnologyMapping().get(key), newCount);
 				}
 			});
 		}
@@ -95,7 +99,7 @@ public class AnalyzerServiceImpl extends CommonServiceImpl implements IAnalyzerS
 		analysisResult.setPosition(fetchedResult.getPosition());
 		analysisResult.setTechnologyCounter(technologyCounterEchartsData);
 		analysisResult.setTechnologyTypeCounter(technologyTypeCounterEchartsData);
-		//日志
+		// 日志
 		logger.info("爬取Job总数：" + fetchedResult.getTotal());
 		logger.info("爬取成功数：" + fetchedResult.getSuccessCount());
 		logger.info("爬取失败数：" + fetchedResult.getFailureCount());

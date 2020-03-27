@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.getfei.jobSpider.common.DataCenter;
 import com.getfei.jobSpider.dao.IPositionDao;
 import com.getfei.jobSpider.entity.Position;
 import com.getfei.jobSpider.entity.Positions;
@@ -27,7 +28,8 @@ public class PositionServiceImpl extends MongoBaseServiceImpl<Position> implemen
 	@Override
 	public List<Position> list() {
 		//先去Positions里找，找不到再去数据库里找
-		List<Position> positions=Positions.getList();
+//		List<Position> positions=Positions.getList();
+		List<Position> positions=DataCenter.getPositions();
 		if(positions==null) {
 			logger.warn("获取positions时警告：Positions里找不到，去数据库里找。");
 			positions=super.list();

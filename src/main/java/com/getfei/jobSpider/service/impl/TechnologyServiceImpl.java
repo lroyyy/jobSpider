@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.getfei.jobSpider.common.DataCenter;
 import com.getfei.jobSpider.dao.ITechnologyDao;
 import com.getfei.jobSpider.entity.Technologies;
 import com.getfei.jobSpider.entity.Technology;
@@ -31,7 +32,8 @@ public class TechnologyServiceImpl extends MongoBaseServiceImpl<Technology> impl
 
 	@Override
 	public List<String> ListType() {
-		List<String> types=Technologies.getTechnologyTypes();
+//		List<String> types=Technologies.getTechnologyTypes();
+		List<String> types=DataCenter.getTechnologyTypes();
 		if(types==null) {
 			logger.warn("获取technologyTypes时，找不到technologies.technologyTypes，去库里找。");
 			types = technologyDao.findAllType();

@@ -14,12 +14,13 @@ import org.springframework.stereotype.Component;
 
 import com.getfei.jobSpider.dao.ITechnologyDao;
 
-@Component
+@Deprecated
+//@Component
 public class Technologies {
 
 	private static Logger logger = LoggerFactory.getLogger(Technologies.class);
-	public static Technologies technologies;
-	public static Map<String, Technology> technologyMapping;
+	private static Technologies technologies;
+	private static Map<String, Technology> technologyMapping;
 	private static List<String> technologyTypes;
 
 	private static ITechnologyDao technologyDao;
@@ -32,7 +33,7 @@ public class Technologies {
 	@PostConstruct
 	public static void init() {
 		technologyMapping = getTechnologiesFromMongoDB();
-		technologyTypes=getTechnologyTypesFromMongoDB();
+//		technologyTypes=getTechnologyTypesFromMongoDB();
 		logger.info("technologyMapping初始化成功，个数为"+technologyMapping.size());
 		logger.info("technologyTypes初始化成功，个数为"+technologyTypes.size());
 	}
@@ -44,12 +45,12 @@ public class Technologies {
 		return map;
 	}
 	
-	public static List<String> getTechnologyTypesFromMongoDB(){
-		return technologyDao.findAllType();
-	}
-
-	public static List<String> getTechnologyTypes() {
-		return technologyTypes;
-	}
+//	public static List<String> getTechnologyTypesFromMongoDB(){
+//		return technologyDao.findAllType();
+//	}
+//
+//	public static List<String> getTechnologyTypes() {
+//		return technologyTypes;
+//	}
 
 }

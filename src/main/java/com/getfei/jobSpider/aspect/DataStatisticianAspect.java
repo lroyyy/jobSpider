@@ -19,7 +19,7 @@ import com.getfei.jobSpider.util.ResponseResult;
  * @author lroy
  *
  */
-@Aspect
+//@Aspect
 @Component
 public class DataStatisticianAspect {
 

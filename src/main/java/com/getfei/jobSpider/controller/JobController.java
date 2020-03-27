@@ -59,6 +59,7 @@ public class JobController extends BaseController {
 			logger.warn("报错！信息："+e.getMessage());
 			rr.setState(ERROR);
 			rr.setMessage(e.getMessage());
+			e.printStackTrace();
 			return rr;
 		}
 		rr.setData(analysisResult);
