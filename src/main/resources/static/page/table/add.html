@@ -1,0 +1,123 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">录入日期</label>
+            <div class="layui-input-inline">
+                <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <select name="status" lay-verify="">
+                    <option value="">请选择</option>
+                    <option value="关注">关注</option>
+                    <option value="已投递">已投递</option>
+                    <option value="已通知面试">已通知面试</option>
+                    <option value="等待面试结果">"等待面试结果</option>
+                    <option value="已收offer">"已收offer</option>
+                    <option value="已被拒绝">"已被拒绝</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">网址</label>
+            <div class="layui-input-block">
+                <input type="number" name="url" placeholder="请输入网址" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">招聘平台</label>
+            <div class="layui-input-block">
+                <select name="jobBoard" lay-verify="">
+                    <option value="">请选择</option>
+                    <option value="智联">智联</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">公司名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="companyName" placeholder="请输入公司名称" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">公司简称</label>
+            <div class="layui-input-block">
+                <input type="text" name="companyShorthand" placeholder="请输入公司简称" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="address" placeholder="请输入地址" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">薪资</label>
+            <div class="layui-input-block">
+                <input type="text" name="salary" placeholder="请输入薪资" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            laydate = layui.laydate,
+            $ = layui.$;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+        laydate.render({
+            elem: '#date'
+        });
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var index = layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            }, function () {
+                $.ajax({
+                    type: "post",
+                    url: "/" + projectName + "/deliverRecords",
+                    data: JSON.stringify(data.field),
+                    contentType: "application/json;charset=UTF-8",//指定消息请求类型
+
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.state == 200) {
+                            console.log("投递记录写入成功。");
+                            // 关闭弹出层
+                            layer.close(index);
+                            layer.close(parentIndex);
+                        } else {
+                            console.log("投递记录写入失败。");
+                        }
+                    }
+                });
+
+
+            });
+
+
+            return false;
+        });
+
+    });
+</script>

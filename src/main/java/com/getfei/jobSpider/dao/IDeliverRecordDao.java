@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.getfei.jobSpider.entity.DeliverRecord;
 
-public interface IDeliverRecord {
+public interface IDeliverRecordDao {
 
 	void insert(DeliverRecord deliverRecord);
 

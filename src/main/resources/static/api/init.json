@@ -28,6 +28,12 @@
                     "href": "page/technology.html",
                     "icon": "fa fa-stack-overflow",
                     "target": "_self"
+                },
+                {
+                    "title": "投递记录",
+                    "href": "page/deliverrecord.html",
+                    "icon": "fa fa-envelope-o",
+                    "target": "_self"
                 }
             ]
         },
