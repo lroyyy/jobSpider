@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.getfei.jobSpider.dao.IPositionDao;
 import com.getfei.jobSpider.dao.ITechnologyDao;
@@ -21,18 +22,17 @@ import com.getfei.jobSpider.entity.Technology;
  * @author getfei
  *
  */
+@Component
 public class DataCenter {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	private static IPositionDao positionDao;
+	private IPositionDao positionDao;
 
 	private static ITechnologyDao technologyDao;
 
 	private static List<Position> positions;
-
-//	private static List<Technology> technologies;
 
 	private static List<String> technologyTypes;
 
@@ -45,7 +45,7 @@ public class DataCenter {
 
 	@PostConstruct
 	public void init() {
-		//
+		//服务器刚启动，先查一次库，数据载入DataCenter
 		try {
 			positions = new CopyOnWriteArrayList<>(positionDao.findAll());
 		} catch (Exception e) {
@@ -86,7 +86,7 @@ public class DataCenter {
 	public static List<String> getTechnologyTypes(){
 		return technologyTypes;
 	}
-
+	
 	/** 构造自MongoDB */
 	private static Map<String, Technology> getTechnologiesFromMongoDB() {
 		List<Technology> technologies = new CopyOnWriteArrayList<>(technologyDao.findAll());

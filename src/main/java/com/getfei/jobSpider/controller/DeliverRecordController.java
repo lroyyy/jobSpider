@@ -2,7 +2,10 @@ package com.getfei.jobSpider.controller;
 
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +40,14 @@ public class DeliverRecordController extends BaseController{
 	public ResponseResult<String> add(@RequestBody DeliverRecord deliverRecord){
 		ResponseResult<String> rr=new ResponseResult<>();
 		deliverRecordService.save(deliverRecord);
+		rr.setState(SUCCESS);
+		return rr;
+	}
+	
+	@DeleteMapping
+	public ResponseResult<String> delete(@RequestBody DeliverRecord deliverRecord){
+		ResponseResult<String> rr=new ResponseResult<>();
+		deliverRecordService.remove(deliverRecord);
 		rr.setState(SUCCESS);
 		return rr;
 	}

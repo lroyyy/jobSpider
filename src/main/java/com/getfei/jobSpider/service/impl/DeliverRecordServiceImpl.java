@@ -2,6 +2,7 @@ package com.getfei.jobSpider.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.getfei.jobSpider.dao.impl.MongoTemplateDaoImpl;
 import com.getfei.jobSpider.entity.DeliverRecord;
 import com.getfei.jobSpider.service.IDeliverRecordService;
 

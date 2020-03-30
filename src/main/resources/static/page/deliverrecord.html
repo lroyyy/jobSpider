@@ -88,7 +88,14 @@
 
         table.render({
             elem: '#currentTableId',
-            url: 'api/table.json',
+            url: 'deliverRecords',
+            response: {
+                statusName: 'state',// 规定数据状态的字段名称，默认：code
+                statusCode: 200,// 规定成功的状态码，默认：0
+                msgName: 'message',// 规定状态信息的字段名称，默认：msg
+                countName: 'dataCount',// 规定数据总数的字段名称，默认：count
+                dataName: 'data' // 规定数据列表的字段名称，默认：data
+            },
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -96,17 +103,17 @@
                 icon: 'layui-icon-tips'
             }],
             cols: [[
-                {type: "checkbox", width: 50, fixed: "left"},
-                {field: 'id', width: 80, title: 'ID', sort: true},
-                {field: 'username', width: 80, title: '用户名'},
-                {field: 'sex', width: 80, title: '性别', sort: true},
-                {field: 'city', width: 80, title: '城市'},
-                {field: 'sign', title: '签名', minWidth: 150},
-                {field: 'experience', width: 80, title: '积分', sort: true},
-                {field: 'score', width: 80, title: '评分', sort: true},
-                {field: 'classify', width: 80, title: '职业'},
-                {field: 'wealth', width: 135, title: '财富', sort: true},
-                {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"}
+                {type: "checkbox", width: "4%", fixed: "left"},
+                {field: '_id', width: "6%", title: 'ID', sort: true},
+                {field: 'date', width: "10%", title: '录入日期', sort: true},
+                {field: 'status', width: "8%", title: '状态', sort: true},
+                {field: 'url', width: "10%", title: '网址', sort: true},
+                {field: 'jobBoard', width: "10%", title: '招聘平台', sort: true},
+                {field: 'companyName', width: "10%", title: '公司名称', sort: true},
+                {field: 'companyShorthand', width: "10%", title: '公司简称', sort: true},
+                {field: 'address', width: "10%", title: '地址', sort: true},
+                {field: 'salary', width: "10%", title: '薪资', sort: true},
+                {title: '操作', width: "12%", templet: '#currentTableBar', fixed: "right", align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,
@@ -140,7 +147,7 @@
             var openWH = layuimini.getOpenWidthHeight();
 
             var index = layer.open({
-                title: '添加用户',
+                title: '添加',
                 type: 1,
                 shade: 0.2,
                 maxmin:true,
@@ -148,6 +155,9 @@
                 area: [openWH[0] + 'px', openWH[1] + 'px'],
                 offset: [openWH[2] + 'px', openWH[3] + 'px'],
                 content: content,
+                end:function(){
+                    reloadTable();
+                }
             });
             $(window).on("resize", function () {
                 layer.full(index);
@@ -170,13 +180,13 @@
 
         table.on('tool(currentTableFilter)', function (obj) {
             var data = obj.data;
-            if (obj.event === 'edit') {
+            if (obj.event === 'edit') {//编辑
 
                 var content = layuimini.getHrefContent('page/table/add.html');
                 var openWH = layuimini.getOpenWidthHeight();
 
                 var index = layer.open({
-                    title: '编辑用户',
+                    title: '编辑',
                     type: 1,
                     shade: 0.2,
                     maxmin:true,
@@ -189,13 +199,52 @@
                     layer.full(index);
                 });
                 return false;
-            } else if (obj.event === 'delete') {
-                layer.confirm('真的删除行么', function (index) {
+            } else if (obj.event === 'delete') {//删除
+                layer.confirm('真的删除行么'+JSON.stringify(data), function (index) {
+                    deleteData(data);
                     obj.del();
                     layer.close(index);
+                    reloadTable();
                 });
             }
         });
+
+        //ajax删除
+        const deleteData=function(data){
+            var defer = $.Deferred();
+            $.ajax({
+                type: "delete",
+                url: "/" + projectName+"/deliverRecords",
+                data: JSON.stringify(data),
+                contentType: "application/json;charset=UTF-8",//指定消息请求类型
+                dataType: "json",
+                success: function (response) {
+                    if(response.data==200){
+                        layer.alert("删除成功！");
+                    }else{
+                        layer.alert("删除失败！");
+                    }
+                }
+            });
+        }
+
+        /**重载表格*/
+        const reloadTable = function (data) {
+            // const data=form.val("currentTableId");
+            console.log("before reloadTable,data=" + JSON.stringify(data));
+            let whereData = null;
+            if (data != null) {
+                whereData = {
+                    type: data.field.type
+                    , name: data.field.name
+                    , alias: data.field.alias
+                }
+            }
+            table.reload('currentTableId', {
+                page: { curr: 1 }
+                , where: whereData
+            });
+        }
 
     });
 </script>

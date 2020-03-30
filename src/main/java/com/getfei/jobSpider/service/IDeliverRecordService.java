@@ -14,5 +14,7 @@ public interface IDeliverRecordService {
 	
 	/**清空*/
 	void clear();
+	
+	void remove(DeliverRecord deliverRecord);
 
 }

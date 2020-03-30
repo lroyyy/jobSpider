@@ -10,4 +10,6 @@ public interface IDeliverRecordDao {
 
 	List<DeliverRecord> findAll();
 	
+	void delete(DeliverRecord deliverRecord);
+	
 }

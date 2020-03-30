@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -22,6 +24,8 @@ public class DeliverRecord extends BaseEntity{
 
 	private static final long serialVersionUID = 1150653755441523833L;
 
+//	@Id
+	private String _id;
 	/**录入日期*/
 //	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate date;
