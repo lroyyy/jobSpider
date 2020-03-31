@@ -66,6 +66,12 @@ public class MongoTemplateDaoImpl<T> implements IMongoTemplateDao<T>{
 		return mongoTemplate.findAll(getTClass(), getCollectionName());
 	}
 	
+	/**根据id查询单个document*/
+	@Override
+	public T findById(String id) {
+		return mongoTemplate.findOne(Query.query(Criteria.where("_id").is(id)), getTClass(), getCollectionName());
+	}
+	
 	/**查询单个document，条件为指定字段和匹配值*/
 	public T findByField(String fieldName,String fieldValue){
 		return mongoTemplate.findOne(Query.query(Criteria.where(fieldName).is(fieldValue)), getTClass(), getCollectionName());
@@ -95,4 +101,11 @@ public class MongoTemplateDaoImpl<T> implements IMongoTemplateDao<T>{
 		mongoTemplate.remove(entity,getCollectionName());
 	}
 	
+	@Override
+	public void batchDelete(List<T> entities) {
+		entities.forEach(element->{
+			mongoTemplate.remove(element,  getCollectionName());
+		});
+	}
+
 }

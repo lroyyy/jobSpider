@@ -6,28 +6,44 @@
             <div style="margin: 10px 10px 10px 10px">
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
-                        <div class="layui-inline">
+                        <!-- <div class="layui-inline">
                             <label class="layui-form-label">录入日期</label>
                             <div class="layui-input-inline">
                                 <input type="text" name="date" autocomplete="off" class="layui-input">
                             </div>
-                        </div>
+                        </div> -->
                         <div class="layui-inline">
                             <label class="layui-form-label">状态</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="status" autocomplete="off" class="layui-input">
+                                <select name="status" lay-verify="">
+                                    <option value="">请选择</option>
+                                    <option value="关注">关注</option>
+                                    <option value="已发起沟通">已发起沟通</option>
+                                    <option value="已投递">已投递</option>
+                                    <option value="收到面试通知">收到面试通知</option>
+                                    <option value="等待面试结果">等待面试结果</option>
+                                    <option value="收到offer">收到offer</option>
+                                    <option value="已被拒绝">已被拒绝</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="layui-inline">
+                        <!-- <div class="layui-inline">
                             <label class="layui-form-label">网址</label>
                             <div class="layui-input-inline">
                                 <input type="text" name="url" autocomplete="off" class="layui-input">
                             </div>
-                        </div>
+                        </div> -->
                         <div class="layui-inline">
                             <label class="layui-form-label">招聘平台</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="jobBoard" autocomplete="off" class="layui-input">
+                                <select name="jobBoard" lay-verify="">
+                                    <option value="">请选择</option>
+                                    <option value="智联">智联</option>
+                                    <option value="Boss直聘">Boss直聘</option>
+                                    <option value="前程无忧">前程无忧</option>
+                                    <option value="拉勾">拉勾</option>
+                                    <option value="58同城">58同城</option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -48,14 +64,15 @@
                                 <input type="text" name="address" autocomplete="off" class="layui-input">
                             </div>
                         </div>
-                        <div class="layui-inline">
+                        <!-- <div class="layui-inline">
                             <label class="layui-form-label">薪资</label>
                             <div class="layui-input-inline">
                                 <input type="text" name="salary" autocomplete="off" class="layui-input">
                             </div>
-                        </div>
+                        </div> -->
                         <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit
+                                lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
                         </div>
                     </div>
                 </form>
@@ -80,20 +97,20 @@
 </div>
 
 <script>
-    layui.use(['form', 'table','layuimini','element'], function () {
+    layui.use(['form', 'table', 'layuimini', 'element'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
             layuimini = layui.layuimini;
 
-        table.render({
+        var tableObj = table.render({
             elem: '#currentTableId',
             url: 'deliverRecords',
             response: {
-                statusName: 'state',// 规定数据状态的字段名称，默认：code
-                statusCode: 200,// 规定成功的状态码，默认：0
-                msgName: 'message',// 规定状态信息的字段名称，默认：msg
-                countName: 'dataCount',// 规定数据总数的字段名称，默认：count
+                statusName: 'state', // 规定数据状态的字段名称，默认：code
+                statusCode: 200, // 规定成功的状态码，默认：0
+                msgName: 'message', // 规定状态信息的字段名称，默认：msg
+                countName: 'dataCount', // 规定数据总数的字段名称，默认：count
                 dataName: 'data' // 规定数据列表的字段名称，默认：data
             },
             toolbar: '#toolbarDemo',
@@ -102,19 +119,75 @@
                 layEvent: 'LAYTABLE_TIPS',
                 icon: 'layui-icon-tips'
             }],
-            cols: [[
-                {type: "checkbox", width: "4%", fixed: "left"},
-                {field: '_id', width: "6%", title: 'ID', sort: true},
-                {field: 'date', width: "10%", title: '录入日期', sort: true},
-                {field: 'status', width: "8%", title: '状态', sort: true},
-                {field: 'url', width: "10%", title: '网址', sort: true},
-                {field: 'jobBoard', width: "10%", title: '招聘平台', sort: true},
-                {field: 'companyName', width: "10%", title: '公司名称', sort: true},
-                {field: 'companyShorthand', width: "10%", title: '公司简称', sort: true},
-                {field: 'address', width: "10%", title: '地址', sort: true},
-                {field: 'salary', width: "10%", title: '薪资', sort: true},
-                {title: '操作', width: "12%", templet: '#currentTableBar', fixed: "right", align: "center"}
-            ]],
+            cols: [
+                [{
+                        type: "checkbox",
+                        width: "4%",
+                        fixed: "left"
+                    },
+                    {
+                        field: '_id',
+                        width: "6%",
+                        title: 'ID',
+                        sort: true
+                    },
+                    {
+                        field: 'date',
+                        width: "10%",
+                        title: '录入日期',
+                        sort: true
+                    },
+                    {
+                        field: 'status',
+                        width: "8%",
+                        title: '状态',
+                        sort: true
+                    },
+                    {
+                        field: 'url',
+                        width: "10%",
+                        title: '网址',
+                        sort: true
+                    },
+                    {
+                        field: 'jobBoard',
+                        width: "10%",
+                        title: '招聘平台',
+                        sort: true
+                    },
+                    {
+                        field: 'companyName',
+                        width: "10%",
+                        title: '公司名称',
+                        sort: true
+                    },
+                    {
+                        field: 'companyShorthand',
+                        width: "10%",
+                        title: '公司简称',
+                        sort: true
+                    },
+                    {
+                        field: 'address',
+                        width: "10%",
+                        title: '地址',
+                        sort: true
+                    },
+                    {
+                        field: 'salary',
+                        width: "10%",
+                        title: '薪资',
+                        sort: true
+                    },
+                    {
+                        title: '操作',
+                        width: "12%",
+                        templet: '#currentTableBar',
+                        fixed: "right",
+                        align: "center"
+                    }
+                ]
+            ],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,
             page: true
@@ -127,123 +200,175 @@
                 title: '最终的搜索信息'
             });
 
-            //执行搜索重载
-            table.reload('currentTableId', {
-                page: {
-                    curr: 1
-                }
-                , where: {
-                    searchParams: result
-                }
-            }, 'data');
+            reloadTable(data);
 
             return false;
         });
 
-        // 监听添加操作
-        $(".data-add-btn").on("click", function () {
+        /**初始化表头按钮*/
+        const initTableHeaderBtns = function () {
+            // 监听添加操作
+            $(".data-add-btn").on("click", function () {
 
-            var content = layuimini.getHrefContent('page/table/add.html');
-            var openWH = layuimini.getOpenWidthHeight();
+                var content = layuimini.getHrefContent('page/table/add.html');
+                var openWH = layuimini.getOpenWidthHeight();
 
-            var index = layer.open({
-                title: '添加',
-                type: 1,
-                shade: 0.2,
-                maxmin:true,
-                shadeClose: true,
-                area: [openWH[0] + 'px', openWH[1] + 'px'],
-                offset: [openWH[2] + 'px', openWH[3] + 'px'],
-                content: content,
-                end:function(){
-                    reloadTable();
+                var index = layer.open({
+                    title: '添加',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                    end: function () { //关闭layer后重载表格
+                        reloadTable();
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+
+                return false;
+            });
+
+            // 监听删除操作
+            $(".data-delete-btn").on("click", function () {
+                var checkStatus = table.checkStatus('currentTableId'),
+                    data = checkStatus.data;
+                const checkedCount = checkStatus.data.length;
+                if (checkedCount == 0) {
+                    layer.msg("请至少选择一项记录！");
+                    return;
                 }
+                layer.confirm("确定删除这" + checkedCount + "条记录？", function (index) {
+                    let msg;
+                    $.when(batchDeleteData(data)).done(function () {
+                        msg = "删除成功。";
+                        reloadTable();
+                    }).fail(function () {
+                        msg = "删除失败。";
+                    }).then(function () {
+                        layer.msg(msg);
+                        layer.close(index);
+                    });
+                });
             });
-            $(window).on("resize", function () {
-                layer.full(index);
-            });
+        }
 
-            return false;
-        });
-
-        // 监听删除操作
-        $(".data-delete-btn").on("click", function () {
-            var checkStatus = table.checkStatus('currentTableId')
-                , data = checkStatus.data;
-            layer.alert(JSON.stringify(data));
-        });
+        initTableHeaderBtns();
 
         //监听表格复选框选择
         table.on('checkbox(currentTableFilter)', function (obj) {
-            console.log(obj)
+            // console.log(obj)
         });
 
+        //表格行内操作区
         table.on('tool(currentTableFilter)', function (obj) {
             var data = obj.data;
-            if (obj.event === 'edit') {//编辑
-
-                var content = layuimini.getHrefContent('page/table/add.html');
+            if (obj.event === 'edit') { //编辑
+                var content = layuimini.getHrefContent('page/table/edit.html');
                 var openWH = layuimini.getOpenWidthHeight();
 
                 var index = layer.open({
                     title: '编辑',
                     type: 1,
                     shade: 0.2,
-                    maxmin:true,
+                    maxmin: true,
                     shadeClose: true,
                     area: [openWH[0] + 'px', openWH[1] + 'px'],
                     offset: [openWH[2] + 'px', openWH[3] + 'px'],
-                    content: content,
+                    content: content + "<input type='hidden' id='id' value='" + data._id + "'>",
+                    end: function () {
+                        reloadTable();
+                    }
                 });
                 $(window).on("resize", function () {
                     layer.full(index);
                 });
                 return false;
-            } else if (obj.event === 'delete') {//删除
-                layer.confirm('真的删除行么'+JSON.stringify(data), function (index) {
-                    deleteData(data);
-                    obj.del();
-                    layer.close(index);
-                    reloadTable();
+            } else if (obj.event === 'delete') { //删除
+                let msg;
+                layer.confirm('确定删除此条记录？', function (index) {
+                    $.when(deleteData(data)).done(function () {
+                        obj.del();
+                        reloadTable();
+                        msg = "删除成功。";
+                    }).fail(function () {
+                        msg = "删除失败。";
+                    }).then(function () {
+                        layer.close(index);
+                        layer.msg(msg);
+                    });
                 });
             }
         });
 
         //ajax删除
-        const deleteData=function(data){
+        const deleteData = function (data) {
             var defer = $.Deferred();
             $.ajax({
                 type: "delete",
-                url: "/" + projectName+"/deliverRecords",
+                url: "/" + projectName + "/deliverRecords",
                 data: JSON.stringify(data),
-                contentType: "application/json;charset=UTF-8",//指定消息请求类型
+                contentType: "application/json;charset=UTF-8", //指定消息请求类型
                 dataType: "json",
                 success: function (response) {
-                    if(response.data==200){
-                        layer.alert("删除成功！");
-                    }else{
-                        layer.alert("删除失败！");
+                    if (response.state == 200) {
+                        defer.resolve();
+                    } else {
+                        defer.reject();
                     }
+                },
+                error: function () {
+                    defer.reject();
                 }
             });
+            return defer.promise();
+        }
+
+        //ajax批量删除
+        const batchDeleteData = function (data) {
+            var defer = $.Deferred();
+            $.ajax({
+                type: "delete",
+                url: "/" + projectName + "/deliverRecords/batch",
+                data: JSON.stringify(data),
+                contentType: "application/json;charset=UTF-8", //指定消息请求类型
+                dataType: "json",
+                success: function (response) {
+                    if (response.state == 200) {
+                        defer.resolve();
+                    } else {
+                        defer.reject();
+                    }
+                },
+                error: function () {
+                    defer.reject();
+                }
+            });
+            return defer.promise();
         }
 
         /**重载表格*/
         const reloadTable = function (data) {
             // const data=form.val("currentTableId");
-            console.log("before reloadTable,data=" + JSON.stringify(data));
             let whereData = null;
             if (data != null) {
                 whereData = {
-                    type: data.field.type
-                    , name: data.field.name
-                    , alias: data.field.alias
+                    type: data.field.type,
+                    name: data.field.name,
+                    alias: data.field.alias
                 }
             }
-            table.reload('currentTableId', {
-                page: { curr: 1 }
-                , where: whereData
+            tableObj.reload({
+                page: {
+                    curr: 1
+                },
+                where: whereData
             });
+            initTableHeaderBtns();
         }
 
     });

@@ -13,6 +13,9 @@ public interface IMongoTemplateDao<T> {
 	/**插入*/
 	public void insert(T entity) ;
 	
+	/**根据id查询*/
+	public T findById(String id);
+	
 	/**查询所有记录*/
 	public List<T> findAll();
 	
@@ -24,5 +27,8 @@ public interface IMongoTemplateDao<T> {
 	
 	/**删除*/
 	public void delete(T entity);
+	
+	/**批量删除*/
+	public void batchDelete(List<T> entities);
 	
 }

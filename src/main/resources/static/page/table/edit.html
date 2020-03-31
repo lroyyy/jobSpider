@@ -1,82 +1,206 @@
 <div class="layuimini-main">
 
-    <div class="layui-form layuimini-form">
+    <form class="layui-form layuimini-form" lay-filter="form-edit">
         <div class="layui-form-item">
-            <label class="layui-form-label required">用户名</label>
-            <div class="layui-input-block">
-                <input type="text" name="username" lay-verify="required" lay-reqtext="用户名不能为空" placeholder="请输入用户名" value="" class="layui-input">
-                <tip>填写自己管理账号的名称。</tip>
+            <label class="layui-form-label">录入日期</label>
+            <div class="layui-input-inline">
+                <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off"
+                    class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label required">性别</label>
-            <div class="layui-input-block">
-                <input type="radio" name="sex" value="男" title="男" checked="">
-                <input type="radio" name="sex" value="女" title="女">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-inline">
+                <select name="status" lay-verify="">
+                    <option value="">请选择</option>
+                    <option value="关注">关注</option>
+                    <option value="已发起沟通">已发起沟通</option>
+                    <option value="已投递">已投递</option>
+                    <option value="收到面试通知">收到面试通知</option>
+                    <option value="等待面试结果">等待面试结果</option>
+                    <option value="收到offer">收到offer</option>
+                    <option value="已被拒绝">已被拒绝</option>
+                </select>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label required">手机</label>
+            <label class="layui-form-label">网址</label>
             <div class="layui-input-block">
-                <input type="number" name="phone" lay-verify="required" lay-reqtext="手机不能为空" placeholder="请输入手机" value="" class="layui-input">
+                <input type="tel" name="url" value="" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">邮箱</label>
-            <div class="layui-input-block">
-                <input type="email" name="email" placeholder="请输入邮箱" value="" class="layui-input">
+            <label class="layui-form-label">招聘平台</label>
+            <div class="layui-input-inline">
+                <select name="jobBoard" lay-verify="">
+                    <option value="">请选择</option>
+                    <option value="智联">智联</option>
+                    <option value="Boss直聘">Boss直聘</option>
+                    <option value="前程无忧">前程无忧</option>
+                    <option value="拉勾">拉勾</option>
+                    <option value="58同城">58同城</option>
+                </select>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">职业</label>
-            <div class="layui-input-block">
-                <input type="text" name="work" placeholder="请输入职业" value="" class="layui-input">
+            <label class="layui-form-label">公司名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="companyName" value="" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item layui-form-text">
-            <label class="layui-form-label">备注信息</label>
+            <label class="layui-form-label">公司简称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="companyShorthand" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">地址</label>
             <div class="layui-input-block">
-                <textarea name="remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
+                <input type="text" name="address" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">薪资</label>
+            <div class="layui-input-inline">
+                <input type="text" name="salary" value="" class="layui-input">
             </div>
         </div>
 
         <div class="layui-form-item">
-            <div class="layui-input-block">
+            <div class="layui-input-inline">
                 <button class="layui-btn" lay-submit lay-filter="saveBtn">确认保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <script>
-    layui.use(['form', 'table'], function () {
+    layui.use(['form', 'table', 'laydate'], function () {
         var form = layui.form,
             layer = layui.layer,
             table = layui.table,
+            laydate = layui.laydate,
             $ = layui.$;
 
+        const recordId = $("#id").val();
         /**
          * 初始化表单，要加上，不然刷新部分组件可能会不加载
          */
         form.render();
+        laydate.render({
+            elem: '#date'
+        });
 
         // 当前弹出层，防止ID被覆盖
         var parentIndex = layer.index;
 
         //监听提交
         form.on('submit(saveBtn)', function (data) {
-            var index = layer.alert(JSON.stringify(data.field), {
-                title: '最终的提交信息'
-            }, function () {
-
-                // 关闭弹出层
-                layer.close(index);
+            // var index = layer.alert(JSON.stringify(data.field), {
+            //     title: '最终的提交信息'
+            // }, function () {});
+            let tmpData = data.field;
+            tmpData._id = recordId;
+            let msg;
+            $.when(ajaxUpdate(tmpData)).done(function () {
+                msg = "投递记录编辑成功。";
+                console.log("投递记录编辑成功。");
                 layer.close(parentIndex);
-
+            }).fail(function () {
+                msg = "投递记录编辑失败。";
+                console.log("投递记录编shbai。");
+            }).then(function () {
+                layer.msg(msg);
             });
-
-
             return false;
         });
+
+        const ajaxUpdate = function (data) {
+            var defer = $.Deferred();
+            $.ajax({
+                type: "patch",
+                url: "/" + projectName + "/deliverRecords",
+                data: JSON.stringify(data),
+                contentType: "application/json;charset=UTF-8", //指定消息请求类型
+                dataType: "json",
+                success: function (response) {
+                    if (response.state == 200) {
+                        defer.resolve();
+                    } else {
+                        defer.reject();
+                    }
+                },
+                error: function () {
+                    defer.reject();
+                }
+            });
+            return defer.promise();
+        }
+
+        const ajaxSelect = function (id) {
+            var defer = $.Deferred();
+            $.ajax({
+                type: "get",
+                url: "/" + projectName + "/deliverRecords/" + id,
+                // contentType: "application/json;charset=UTF-8", //指定消息请求类型
+                dataType: "json",
+                success: function (response) {
+                    if (response.state == 200) {
+                        defer.resolve(response.data);
+                    } else {
+                        defer.reject();
+                    }
+                },
+                error: function () {
+                    defer.reject();
+                }
+            });
+            return defer.promise();
+        }
+
+        const util = {
+            /**日期格式化 */
+            dateFtt: function (fmt, date) { //author: meizz   
+                var o = {
+                    "M+": date.getMonth() + 1, //月份   
+                    "d+": date.getDate(), //日   
+                    "h+": date.getHours(), //小时   
+                    "m+": date.getMinutes(), //分   
+                    "s+": date.getSeconds(), //秒   
+                    "q+": Math.floor((date.getMonth() + 3) / 3), //季度   
+                    "S": date.getMilliseconds() //毫秒   
+                };
+                if (/(y+)/.test(fmt))
+                    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1
+                        .length));
+                for (var k in o)
+                    if (new RegExp("(" + k + ")").test(fmt))
+                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
+                            .substr((
+                                "" + o[k]).length)));
+                return fmt;
+            },
+            /**获取uri中的指定参数所对应的值 */
+            getUriValue: function (name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return unescape(r[2]);
+                return null;
+            }
+        }
+
+        //表单初始赋值
+        const initFormValue = function () {
+            $.when(ajaxSelect(recordId)).done(function (data) {
+                // layer.msg("记录获取成功。");
+                form.val("form-edit", data);
+            }).fail(function () {
+                layer.msg("记录获取失败了！");
+            });
+        }
+
+        initFormValue();
 
     });
 </script>

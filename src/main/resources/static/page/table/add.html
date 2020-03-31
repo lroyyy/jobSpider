@@ -1,6 +1,6 @@
 <div class="layuimini-main">
 
-    <div class="layui-form layuimini-form" lay-filter="form-add">
+    <form class="layui-form layuimini-form" lay-filter="form-add">
         <div class="layui-form-item">
             <label class="layui-form-label">录入日期</label>
             <div class="layui-input-inline">
@@ -10,10 +10,11 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">状态</label>
-            <div class="layui-input-block">
+            <div class="layui-input-inline">
                 <select name="status" lay-verify="">
                     <option value="">请选择</option>
                     <option value="关注">关注</option>
+                    <option value="已发起沟通">已发起沟通</option>
                     <option value="已投递">已投递</option>
                     <option value="收到面试通知">收到面试通知</option>
                     <option value="等待面试结果">等待面试结果</option>
@@ -25,12 +26,12 @@
         <div class="layui-form-item">
             <label class="layui-form-label">网址</label>
             <div class="layui-input-block">
-                <input type="tel" name="url" placeholder="请输入网址" value="" class="layui-input">
+                <input type="tel" name="url" value="" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">招聘平台</label>
-            <div class="layui-input-block">
+            <div class="layui-input-inline">
                 <select name="jobBoard" lay-verify="">
                     <option value="">请选择</option>
                     <option value="智联">智联</option>
@@ -43,35 +44,36 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">公司名称</label>
-            <div class="layui-input-block">
-                <input type="text" name="companyName" placeholder="请输入公司名称" value="" class="layui-input">
+            <div class="layui-input-inline">
+                <input type="text" name="companyName" value="" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">公司简称</label>
-            <div class="layui-input-block">
-                <input type="text" name="companyShorthand" placeholder="请输入公司简称" value="" class="layui-input">
+            <div class="layui-input-inline">
+                <input type="text" name="companyShorthand" value="" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">地址</label>
             <div class="layui-input-block">
-                <input type="text" name="address" placeholder="请输入地址" value="" class="layui-input">
+                <input type="text" name="address" value="" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">薪资</label>
-            <div class="layui-input-block">
-                <input type="text" name="salary" placeholder="请输入薪资" value="" class="layui-input">
+            <div class="layui-input-inline">
+                <input type="text" name="salary" value="" class="layui-input">
             </div>
         </div>
 
         <div class="layui-form-item">
-            <div class="layui-input-block">
+            <div class="layui-input-inline">
                 <button class="layui-btn" lay-submit lay-filter="saveBtn">确认保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <script>
     layui.use(['form', 'table', 'laydate'], function () {
@@ -94,32 +96,31 @@
 
         //监听提交
         form.on('submit(saveBtn)', function (data) {
-            var index = layer.alert(JSON.stringify(data.field), {
-                title: '最终的提交信息'
-            }, function () {
-                $.ajax({
-                    type: "post",
-                    url: "/" + projectName + "/deliverRecords",
-                    data: JSON.stringify(data.field),
-                    contentType: "application/json;charset=UTF-8", //指定消息请求类型
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.state == 200) {
-                            console.log("投递记录写入成功。");
-                            // 关闭弹出层
-                            layer.close(index);
-                            layer.close(parentIndex);
-                        } else {
-                            console.log("投递记录写入失败。");
-                        }
+            // var index = layer.alert(JSON.stringify(data.field), {
+            //     title: '最终的提交信息'
+            // }, function () {
+            $.ajax({
+                type: "post",
+                url: "/" + projectName + "/deliverRecords",
+                data: JSON.stringify(data.field),
+                contentType: "application/json;charset=UTF-8", //指定消息请求类型
+                dataType: "json",
+                success: function (response) {
+                    if (response.state == 200) {
+                        layer.msg("投递记录写入成功。")
+                        // 关闭弹出层
+                        // layer.close(parentIndex);
+                    } else {
+                        layer.msg("投递记录写入失败。")
                     }
-                });
+                }
             });
+            // });
             return false;
         });
 
         /**日期格式化 */
-        const dateFtt=function (fmt, date) { //author: meizz   
+        const dateFtt = function (fmt, date) { //author: meizz   
             var o = {
                 "M+": date.getMonth() + 1, //月份   
                 "d+": date.getDate(), //日   
@@ -133,12 +134,17 @@
                 fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
             for (var k in o)
                 if (new RegExp("(" + k + ")").test(fmt))
-                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr((
+                        "" + o[k]).length)));
             return fmt;
         }
         //表单初始赋值
-        form.val("form-add",{
-            "date": dateFtt("yyyy-MM-dd",new Date())
-        })
+        var a = {
+            "_id": "123",
+            "date": dateFtt("yyyy-MM-dd", new Date()),
+            "status": "关注"
+        }
+        console.log("a="+a+","+JSON.stringify(a));
+        form.val("form-add", a);
     });
 </script>

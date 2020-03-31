@@ -26,6 +26,11 @@ public class MongoBaseServiceImpl<T> extends CommonServiceImpl {
 		dao.insert(entity);
 	}
 	
+	/**根据id查询**/
+	public T getById(String id) {
+		return dao.findById(id);
+	}
+	
 	/**查询所有记录*/
 	public List<T> list(){
 		return dao.findAll();
@@ -43,6 +48,10 @@ public class MongoBaseServiceImpl<T> extends CommonServiceImpl {
 	
 	public void remove(T entity) {
 		dao.delete(entity);
+	}
+	
+	public void batchRemove(List<T> entities) {
+		dao.batchDelete(entities);
 	}
 
 }

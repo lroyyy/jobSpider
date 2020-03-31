@@ -42,6 +42,6 @@ public class DeliverRecord extends BaseEntity{
 	/**地址*/
 	private String address;
 	/**薪资*/
-	private Double salary;
+	private String salary;
 	
 }
