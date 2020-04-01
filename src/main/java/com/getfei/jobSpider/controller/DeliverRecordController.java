@@ -41,14 +41,12 @@ public class DeliverRecordController extends BaseController {
 			@RequestParam(value = "address", required = false) String address,
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "limit", required = false) Integer limit) {
-		ResponseResult<List<DeliverRecord>> rr = new ResponseResult<>();
 		List<DeliverRecord> deliverRecords = null;
-		logger.info("status="+status+",jobBoard="+jobBoard+",companyName="+companyName);
+		logger.info("status=" + status + ",jobBoard=" + jobBoard + ",companyName=" + companyName);
 		if (!Util.isValuable(status) && !Util.isValuable(jobBoard) && !Util.isValuable(companyName)
-				&& !Util.isValuable(companyShorthand) && !Util.isValuable(address)) {
+				&& !Util.isValuable(companyShorthand) && !Util.isValuable(address)) {//无筛选条件
 			deliverRecords = deliverRecordService.list();
-			logger.info("return alllist");
-		} else {
+		} else {//复合条件
 			Map<String, Object> criteriaMap = new HashMap<>();
 			if (Util.isValuable(status)) {
 				criteriaMap.put("status", status);
@@ -67,8 +65,16 @@ public class DeliverRecordController extends BaseController {
 			}
 			deliverRecords = deliverRecordService.getByMultipleCriteria(criteriaMap);
 		}
-		rr.setState(SUCCESS);
-		rr.setData(deliverRecords);
+		// 分页
+		int totalCount = deliverRecords.size();
+		if (page != null && limit != null) {
+			int fromIndex = (page - 1) * limit;
+//			logger.info("totalCount=" + totalCount + ",fromIndex=" + (fromIndex));
+			int toIndex = fromIndex + limit < totalCount ? fromIndex + limit : totalCount;
+			deliverRecords = deliverRecords.subList(fromIndex, toIndex);
+		}
+		ResponseResult<List<DeliverRecord>> rr = new ResponseResult<>(SUCCESS,deliverRecords);
+		rr.setDataCount(totalCount);
 		return rr;
 	}
 
