@@ -45,15 +45,19 @@ public class DeliverRecordDaoImpl extends MongoTemplateDaoImpl<DeliverRecord> im
 	@Override
 	public List<DeliverRecord> findByMultipleCriteria(Map<String, Object> criteriaMap) {
 		Criteria criteria=new Criteria();
+		List<Criteria> criterias=new ArrayList<>();
 		criteriaMap.forEach((k,v)->{
 			Criteria tmpCriteria=null;
 			if(k.equals("companyName")||k.equals("companyShorthand")||k.equals("address")) {//模糊查询
 				tmpCriteria=Criteria.where(k).regex("^.*"+v+".*$","i");
+				logger.info("模糊k="+k+",v="+v);
 			}else {//默认精确查询
 				tmpCriteria=Criteria.where(k).is(v);
+				logger.info("精确k="+k+",v="+v);
 			}
-			criteria.andOperator(tmpCriteria);
+			criterias.add(tmpCriteria);
 		});
+		criteria.andOperator(criterias.toArray(new Criteria[criterias.size()]));
 		List<DeliverRecord> deliverRecords=mongoTemplate.find(Query.query(criteria),DeliverRecord.class,getCollectionName());
 		return deliverRecords;
 	}

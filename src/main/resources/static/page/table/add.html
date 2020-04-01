@@ -11,15 +11,15 @@
         <div class="layui-form-item">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-inline">
-                <select name="status" lay-verify="">
+                <select id="subwin-status" name="status" lay-verify="">
                     <option value="">请选择</option>
-                    <option value="关注">关注</option>
+                    <!-- <option value="关注">关注</option>
                     <option value="已发起沟通">已发起沟通</option>
                     <option value="已投递">已投递</option>
                     <option value="收到面试通知">收到面试通知</option>
                     <option value="等待面试结果">等待面试结果</option>
                     <option value="收到offer">收到offer</option>
-                    <option value="已被拒绝">已被拒绝</option>
+                    <option value="已被拒绝">已被拒绝</option> -->
                 </select>
             </div>
         </div>
@@ -32,13 +32,13 @@
         <div class="layui-form-item">
             <label class="layui-form-label">招聘平台</label>
             <div class="layui-input-inline">
-                <select name="jobBoard" lay-verify="">
+                <select id="subwin-jobBoard" name="jobBoard" lay-verify="">
                     <option value="">请选择</option>
-                    <option value="智联">智联</option>
+                    <!-- <option value="智联">智联</option>
                     <option value="Boss直聘">Boss直聘</option>
                     <option value="前程无忧">前程无忧</option>
                     <option value="拉勾">拉勾</option>
-                    <option value="58同城">58同城</option>
+                    <option value="58同城">58同城</option> -->
                 </select>
             </div>
         </div>
@@ -96,55 +96,81 @@
 
         //监听提交
         form.on('submit(saveBtn)', function (data) {
-            // var index = layer.alert(JSON.stringify(data.field), {
-            //     title: '最终的提交信息'
-            // }, function () {
+            let msg;
+            $.when(ajaxPostDeliverRecord(data.field)).done(function () {
+                msg = "投递记录写入成功。";
+                // layer.close(parentIndex);
+            }).fail(function () {
+                msg = "投递记录写入失败。";
+            }).then(function () {
+                layer.msg(msg);
+            });
+            return false;
+        });
+
+        const ajaxPostDeliverRecord = function (data) {
+            var defer = $.Deferred();
             $.ajax({
                 type: "post",
                 url: "/" + projectName + "/deliverRecords",
-                data: JSON.stringify(data.field),
+                data: JSON.stringify(data),
                 contentType: "application/json;charset=UTF-8", //指定消息请求类型
                 dataType: "json",
                 success: function (response) {
                     if (response.state == 200) {
-                        layer.msg("投递记录写入成功。")
-                        // 关闭弹出层
-                        // layer.close(parentIndex);
+                        defer.resolve();
                     } else {
-                        layer.msg("投递记录写入失败。")
+                        defer.reject();
                     }
+                },
+                error: function () {
+                    defer.reject();
                 }
             });
-            // });
-            return false;
-        });
+            return defer.promise();
+        }
 
-        /**日期格式化 */
-        const dateFtt = function (fmt, date) { //author: meizz   
-            var o = {
-                "M+": date.getMonth() + 1, //月份   
-                "d+": date.getDate(), //日   
-                "h+": date.getHours(), //小时   
-                "m+": date.getMinutes(), //分   
-                "s+": date.getSeconds(), //秒   
-                "q+": Math.floor((date.getMonth() + 3) / 3), //季度   
-                "S": date.getMilliseconds() //毫秒   
-            };
-            if (/(y+)/.test(fmt))
-                fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
-            for (var k in o)
-                if (new RegExp("(" + k + ")").test(fmt))
-                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr((
-                        "" + o[k]).length)));
-            return fmt;
+        const util = {
+            /**日期格式化 */
+            dateFtt: function (fmt, date) { //author: meizz   
+                var o = {
+                    "M+": date.getMonth() + 1, //月份   
+                    "d+": date.getDate(), //日   
+                    "h+": date.getHours(), //小时   
+                    "m+": date.getMinutes(), //分   
+                    "s+": date.getSeconds(), //秒   
+                    "q+": Math.floor((date.getMonth() + 3) / 3), //季度   
+                    "S": date.getMilliseconds() //毫秒   
+                };
+                if (/(y+)/.test(fmt))
+                    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1
+                        .length));
+                for (var k in o)
+                    if (new RegExp("(" + k + ")").test(fmt))
+                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
+                            .substr((
+                                "" + o[k]).length)));
+                return fmt;
+            }
         }
+
+        const initSelects=function(){
+            const statuses=$("#statuses-val").val().split(",");
+            const jobBoards=$("#jobBoards-val").val().split(",");
+            statuses.forEach(status => {
+                $("#subwin-status").append(new Option(status, status));
+            });
+            jobBoards.forEach(jobBoard => {
+                $("#subwin-jobBoard").append(new Option(jobBoard, jobBoard));
+            });
+            form.render("select");
+        }
+        initSelects();
+
         //表单初始赋值
-        var a = {
-            "_id": "123",
-            "date": dateFtt("yyyy-MM-dd", new Date()),
+        form.val("form-add", {
+            "date": util.dateFtt("yyyy-MM-dd", new Date()),
             "status": "关注"
-        }
-        console.log("a="+a+","+JSON.stringify(a));
-        form.val("form-add", a);
+        });
     });
 </script>

@@ -2,7 +2,7 @@
     <div class="layuimini-main">
 
         <fieldset class="table-search-fieldset">
-            <legend>搜索信息</legend>
+            <legend>搜索记录</legend>
             <div style="margin: 10px 10px 10px 10px">
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
@@ -15,15 +15,8 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">状态</label>
                             <div class="layui-input-inline">
-                                <select name="status" lay-verify="">
+                                <select id="status" name="status" lay-verify="">
                                     <option value="">请选择</option>
-                                    <option value="关注">关注</option>
-                                    <option value="已发起沟通">已发起沟通</option>
-                                    <option value="已投递">已投递</option>
-                                    <option value="收到面试通知">收到面试通知</option>
-                                    <option value="等待面试结果">等待面试结果</option>
-                                    <option value="收到offer">收到offer</option>
-                                    <option value="已被拒绝">已被拒绝</option>
                                 </select>
                             </div>
                         </div>
@@ -36,13 +29,8 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">招聘平台</label>
                             <div class="layui-input-inline">
-                                <select name="jobBoard" lay-verify="">
+                                <select id="jobBoard" name="jobBoard" lay-verify="">
                                     <option value="">请选择</option>
-                                    <option value="智联">智联</option>
-                                    <option value="Boss直聘">Boss直聘</option>
-                                    <option value="前程无忧">前程无忧</option>
-                                    <option value="拉勾">拉勾</option>
-                                    <option value="58同城">58同城</option>
                                 </select>
                             </div>
                         </div>
@@ -73,6 +61,8 @@
                         <div class="layui-inline">
                             <button type="submit" class="layui-btn layui-btn-primary" lay-submit
                                 lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                            <button type="reset" class="layui-btn layui-btn-primary" 
+                                lay-filter="data-reset-btn"><i class="layui-icon">&#xe669;</i> 重置</button>
                         </div>
                     </div>
                 </form>
@@ -103,6 +93,7 @@
             table = layui.table,
             layuimini = layui.layuimini;
 
+        let statuses, jobBoards;
         var tableObj = table.render({
             elem: '#currentTableId',
             url: 'deliverRecords',
@@ -139,7 +130,7 @@
                     },
                     {
                         field: 'status',
-                        width: "8%",
+                        width: "10%",
                         title: '状态',
                         sort: true
                     },
@@ -147,7 +138,8 @@
                         field: 'url',
                         width: "10%",
                         title: '网址',
-                        sort: true
+                        sort: true,
+                        templet: '<div><a target="_blank" href="{{d.url}}" class="layui-table-link">{{d.url}}</a></div>'
                     },
                     {
                         field: 'jobBoard',
@@ -175,7 +167,7 @@
                     },
                     {
                         field: 'salary',
-                        width: "10%",
+                        width: "8%",
                         title: '薪资',
                         sort: true
                     },
@@ -195,13 +187,7 @@
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            var result = JSON.stringify(data.field);
-            layer.alert(result, {
-                title: '最终的搜索信息'
-            });
-
             reloadTable(data);
-
             return false;
         });
 
@@ -221,7 +207,9 @@
                     shadeClose: true,
                     area: [openWH[0] + 'px', openWH[1] + 'px'],
                     offset: [openWH[2] + 'px', openWH[3] + 'px'],
-                    content: content,
+                    content: content + util
+                        .getHiddenInputHtml("statuses-val", statuses.join(",")) + util
+                        .getHiddenInputHtml("jobBoards-val", jobBoards.join(",")),
                     end: function () { //关闭layer后重载表格
                         reloadTable();
                     }
@@ -279,7 +267,9 @@
                     shadeClose: true,
                     area: [openWH[0] + 'px', openWH[1] + 'px'],
                     offset: [openWH[2] + 'px', openWH[3] + 'px'],
-                    content: content + "<input type='hidden' id='id' value='" + data._id + "'>",
+                    content: content + util.getHiddenInputHtml("id-val", data._id) + util
+                        .getHiddenInputHtml("statuses-val", statuses.join(",")) + util
+                        .getHiddenInputHtml("jobBoards-val", jobBoards.join(",")),
                     end: function () {
                         reloadTable();
                     }
@@ -357,9 +347,11 @@
             let whereData = null;
             if (data != null) {
                 whereData = {
-                    type: data.field.type,
-                    name: data.field.name,
-                    alias: data.field.alias
+                    status: data.field.status,
+                    jobBoard: data.field.jobBoard,
+                    companyName: data.field.companyName,
+                    companyShorthand: data.field.companyShorthand,
+                    address: data.field.address
                 }
             }
             tableObj.reload({
@@ -371,5 +363,65 @@
             initTableHeaderBtns();
         }
 
+        const initSelects = function () {
+            const ajaxGetStatues = function () {
+                var defer = $.Deferred();
+                $.ajax({
+                    type: "get",
+                    url: "/" + projectName + "/dataCenter/statuses",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.state == 200) {
+                            defer.resolve(response.data);
+                        } else {
+                            defer.reject();
+                        }
+                    },
+                    error: function () {
+                        defer.reject();
+                    }
+                });
+                return defer.promise();
+            }
+            const ajaxGetJobBoards = function () {
+                var defer = $.Deferred();
+                $.ajax({
+                    type: "get",
+                    url: "/" + projectName + "/dataCenter/jobBoards",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.state == 200) {
+                            defer.resolve(response.data);
+                        } else {
+                            defer.reject();
+                        }
+                    },
+                    error: function () {
+                        defer.reject();
+                    }
+                });
+                return defer.promise();
+            }
+            $.when(ajaxGetStatues(), ajaxGetJobBoards()).done(function (d1, d2) {
+                statuses = d1;
+                jobBoards = d2;
+                statuses.forEach(status => {
+                    $("#status").append(new Option(status, status));
+                });
+                jobBoards.forEach(jobBoard => {
+                    $("#jobBoard").append(new Option(jobBoard, jobBoard));
+                });
+                form.render("select");
+            }).fail(function () {
+                layer.msg("下拉框数据获取失败了。");
+            });
+        }
+        initSelects();
+
+        const util = {
+            getHiddenInputHtml: function (id, value) {
+                return "<input type='hidden' id='" + id + "' value='" + value + "'>";
+            }
+        }
     });
 </script>

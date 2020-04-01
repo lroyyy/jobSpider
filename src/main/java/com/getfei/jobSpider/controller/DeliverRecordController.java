@@ -24,6 +24,7 @@ import com.getfei.jobSpider.entity.JobBoard;
 import com.getfei.jobSpider.service.IDeliverRecordService;
 import com.getfei.jobSpider.service.impl.MongoBaseServiceImpl;
 import com.getfei.jobSpider.util.ResponseResult;
+import com.getfei.jobSpider.util.Util;
 
 @RestController
 @RequestMapping("deliverRecords")
@@ -42,26 +43,29 @@ public class DeliverRecordController extends BaseController {
 			@RequestParam(value = "limit", required = false) Integer limit) {
 		ResponseResult<List<DeliverRecord>> rr = new ResponseResult<>();
 		List<DeliverRecord> deliverRecords = null;
-		if(status==null&&jobBoard==null&&companyName==null&&companyShorthand==null&&address==null) {
-			deliverRecords=deliverRecordService.list();
-		}else {
-			Map<String,Object> criteriaMap=new HashMap<>();
-			if(status!=null) {
+		logger.info("status="+status+",jobBoard="+jobBoard+",companyName="+companyName);
+		if (!Util.isValuable(status) && !Util.isValuable(jobBoard) && !Util.isValuable(companyName)
+				&& !Util.isValuable(companyShorthand) && !Util.isValuable(address)) {
+			deliverRecords = deliverRecordService.list();
+			logger.info("return alllist");
+		} else {
+			Map<String, Object> criteriaMap = new HashMap<>();
+			if (Util.isValuable(status)) {
 				criteriaMap.put("status", status);
 			}
-			if(jobBoard!=null) {
+			if (Util.isValuable(jobBoard)) {
 				criteriaMap.put("jobBoard", jobBoard);
 			}
-			if(companyName!=null) {
+			if (Util.isValuable(companyName)) {
 				criteriaMap.put("companyName", companyName);
 			}
-			if(companyShorthand!=null) {
+			if (Util.isValuable(companyShorthand)) {
 				criteriaMap.put("companyShorthand", companyShorthand);
 			}
-			if(address!=null) {
+			if (Util.isValuable(address)) {
 				criteriaMap.put("address", address);
 			}
-			deliverRecords=deliverRecordService.getByMultipleCriteria(criteriaMap);
+			deliverRecords = deliverRecordService.getByMultipleCriteria(criteriaMap);
 		}
 		rr.setState(SUCCESS);
 		rr.setData(deliverRecords);

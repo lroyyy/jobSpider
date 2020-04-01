@@ -11,15 +11,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-inline">
-                <select name="status" lay-verify="">
+                <select id="subwin-status" name="status" lay-verify="">
                     <option value="">请选择</option>
-                    <option value="关注">关注</option>
-                    <option value="已发起沟通">已发起沟通</option>
-                    <option value="已投递">已投递</option>
-                    <option value="收到面试通知">收到面试通知</option>
-                    <option value="等待面试结果">等待面试结果</option>
-                    <option value="收到offer">收到offer</option>
-                    <option value="已被拒绝">已被拒绝</option>
                 </select>
             </div>
         </div>
@@ -32,13 +25,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">招聘平台</label>
             <div class="layui-input-inline">
-                <select name="jobBoard" lay-verify="">
+                <select id="subwin-jobBoard" name="jobBoard" lay-verify="">
                     <option value="">请选择</option>
-                    <option value="智联">智联</option>
-                    <option value="Boss直聘">Boss直聘</option>
-                    <option value="前程无忧">前程无忧</option>
-                    <option value="拉勾">拉勾</option>
-                    <option value="58同城">58同城</option>
                 </select>
             </div>
         </div>
@@ -82,8 +70,7 @@
             table = layui.table,
             laydate = layui.laydate,
             $ = layui.$;
-
-        const recordId = $("#id").val();
+        const recordId = $("#id-val").val();
         /**
          * 初始化表单，要加上，不然刷新部分组件可能会不加载
          */
@@ -105,11 +92,9 @@
             let msg;
             $.when(ajaxUpdate(tmpData)).done(function () {
                 msg = "投递记录编辑成功。";
-                console.log("投递记录编辑成功。");
                 layer.close(parentIndex);
             }).fail(function () {
                 msg = "投递记录编辑失败。";
-                console.log("投递记录编shbai。");
             }).then(function () {
                 layer.msg(msg);
             });
@@ -189,6 +174,19 @@
                 return null;
             }
         }
+
+        const initSelects=function(){
+            const statuses=$("#statuses-val").val().split(",");
+            const jobBoards=$("#jobBoards-val").val().split(",");
+            statuses.forEach(status => {
+                $("#subwin-status").append(new Option(status, status));
+            });
+            jobBoards.forEach(jobBoard => {
+                $("#subwin-jobBoard").append(new Option(jobBoard, jobBoard));
+            });
+            form.render("select");
+        }
+        initSelects();
 
         //表单初始赋值
         const initFormValue = function () {
