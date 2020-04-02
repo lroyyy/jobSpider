@@ -7,6 +7,7 @@ server:
 #mybatis:
 # mapper-locations: classpath:mappers/*.xml
 
+#mongodb
 spring:
   data:
     mongodb:
@@ -29,4 +30,15 @@ logging:
       core:
        index: false
 
+#shiro
+shiro:
+  hash-algorithm-name: md5
+  hash-iterations: 2
+  #任何人均可访问
+  anon-urls:
+  - /**
+  login-url: /login.html
+##  log-out-url: /login/logout*
+  authc-ulrs:
+  - /deliverRecords*
 
