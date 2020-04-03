@@ -3,27 +3,23 @@ package com.getfei.jobSpider.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import com.getfei.jobSpider.realm.UserRealm;
 
+@ConfigurationProperties(prefix = "shiro")
 @Configuration
 public class ShiroConfig {
 
-	/**
-     * 声明userRealm
-     */
-    @Bean("userRealm")
-    public UserRealm userRealm(CredentialsMatcher credentialsMatcher) {
+    @Bean
+    public Realm realm(){
         UserRealm userRealm = new UserRealm();
-        // 注入凭证匹配器
-        userRealm.setCredentialsMatcher(credentialsMatcher);
+        userRealm.setCredentialsMatcher(hashedCredentialsMatcher());
         return userRealm;
     }
     /**
@@ -35,8 +31,8 @@ public class ShiroConfig {
     public ShiroFilterChainDefinition shiroFilterChainDefinition(){
         DefaultShiroFilterChainDefinition chain = new DefaultShiroFilterChainDefinition();
         Map<String,String> pathDefinitions = new HashMap<>();
-        pathDefinitions.put("/loginDo","anon");
-        pathDefinitions.put("/**","authc");
+//        pathDefinitions.put("/*","anon");
+        pathDefinitions.put("/deliverRecord*","authc");
         chain.addPathDefinitions(pathDefinitions);
         return chain;
     }
