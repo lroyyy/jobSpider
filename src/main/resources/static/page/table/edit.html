@@ -32,7 +32,7 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">公司名称</label>
-            <div class="layui-input-inline">
+            <div class="layui-input-block">
                 <input type="text" name="companyName" value="" class="layui-input">
             </div>
         </div>
@@ -52,6 +52,25 @@
             <label class="layui-form-label">薪资</label>
             <div class="layui-input-inline">
                 <input type="text" name="salary" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">面试时间</label>
+            <div class="layui-input-inline">
+                <input type="text" name="interviewDateTime" id="interviewDateTime" placeholder="yyyy-MM-dd HH:mm:ss" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">面试地点</label>
+            <div class="layui-input-block">
+                <input type="text" name="interviewAddress" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <input type="text" name="remark" value="" class="layui-input">
             </div>
         </div>
 
@@ -77,6 +96,14 @@
         form.render();
         laydate.render({
             elem: '#date'
+            ,value:new Date()
+            ,calendar: true
+        });
+        laydate.render({
+            elem: '#interviewDateTime'
+            ,type: 'datetime'
+            ,format:'yyyy-MM-dd HH:mm:ss'
+            ,calendar: true
         });
 
         // 当前弹出层，防止ID被覆盖

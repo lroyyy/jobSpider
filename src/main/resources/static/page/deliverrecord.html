@@ -52,6 +52,12 @@
                                 <input type="text" name="address" autocomplete="off" class="layui-input">
                             </div>
                         </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">备注</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="remark" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
                         <!-- <div class="layui-inline">
                             <label class="layui-form-label">薪资</label>
                             <div class="layui-input-inline">
@@ -61,8 +67,8 @@
                         <div class="layui-inline">
                             <button type="submit" class="layui-btn layui-btn-primary" lay-submit
                                 lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
-                            <button type="reset" class="layui-btn layui-btn-primary" 
-                                lay-filter="data-reset-btn"><i class="layui-icon">&#xe669;</i> 重置</button>
+                            <button type="reset" class="layui-btn layui-btn-primary" lay-filter="data-reset-btn"><i
+                                    class="layui-icon">&#xe669;</i> 重置</button>
                         </div>
                     </div>
                 </form>
@@ -96,6 +102,7 @@
         let statuses, jobBoards;
         var tableObj = table.render({
             elem: '#currentTableId',
+            title:"投递记录",
             url: 'deliverRecords',
             response: {
                 statusName: 'state', // 规定数据状态的字段名称，默认：code
@@ -112,72 +119,90 @@
             }],
             cols: [
                 [{
-                        type: "checkbox",
-                        width: "4%",
-                        fixed: "left"
-                    },
-                    {
-                        field: '_id',
-                        width: "6%",
-                        title: 'ID',
-                        sort: true
-                    },
-                    {
-                        field: 'date',
-                        width: "10%",
-                        title: '日期',
-                        sort: true
-                    },
-                    {
-                        field: 'status',
-                        width: "10%",
-                        title: '状态',
-                        sort: true
-                    },
-                    {
-                        field: 'url',
-                        width: "10%",
-                        title: '网址',
-                        sort: true,
-                        templet: '<div><a target="_blank" href="{{d.url}}" class="layui-table-link">{{d.url}}</a></div>'
-                    },
-                    {
-                        field: 'jobBoard',
-                        width: "10%",
-                        title: '招聘平台',
-                        sort: true
-                    },
-                    {
-                        field: 'companyName',
-                        width: "10%",
-                        title: '公司名称',
-                        sort: true
-                    },
-                    {
-                        field: 'companyShorthand',
-                        width: "10%",
-                        title: '公司简称',
-                        sort: true
-                    },
-                    {
-                        field: 'address',
-                        width: "10%",
-                        title: '地址',
-                        sort: true
-                    },
-                    {
-                        field: 'salary',
-                        width: "8%",
-                        title: '薪资',
-                        sort: true
-                    },
-                    {
-                        title: '操作',
-                        width: "12%",
-                        templet: '#currentTableBar',
-                        fixed: "right",
-                        align: "center"
-                    }
+                    type: "checkbox",
+                    width: "4%",
+                    fixed: "left"
+                },
+                {
+                    field: '_id',
+                    width: "4%",
+                    title: 'ID',
+                    sort: true
+                },
+                {
+                    field: 'date',
+                    width: "10%",
+                    title: '日期',
+                    sort: true
+                },
+                {
+                    field: 'status',
+                    width: "8%",
+                    title: '状态',
+                    sort: true
+                },
+                {
+                    field: 'url',
+                    width: "8%",
+                    title: '网址',
+                    sort: true,
+                    templet: '<div><a target="_blank" href="{{d.url}}" class="layui-table-link">{{d.url}}</a></div>'
+                },
+                {
+                    field: 'jobBoard',
+                    width: "10%",
+                    title: '招聘平台',
+                    sort: true
+                },
+                {
+                    field: 'companyName',
+                    width: "15%",
+                    title: '公司名称',
+                    sort: true
+                },
+                {
+                    field: 'companyShorthand',
+                    width: "10%",
+                    title: '公司简称',
+                    sort: true
+                },
+                {
+                    field: 'address',
+                    width: "8%",
+                    title: '地址',
+                    sort: true
+                },
+                {
+                    field: 'salary',
+                    width: "8%",
+                    title: '薪资',
+                    sort: true
+                },
+                {
+                    field: 'interviewDateTime',
+                    width: "10%",
+                    title: '面试时间',
+                    sort: true
+                },
+                {
+                    field: 'interviewAddress',
+                    width: "8%",
+                    title: '面试地点',
+                    sort: true
+                },
+                {
+                    field: 'remark',
+                    width: "8%",
+                    title: '备注',
+                    sort: true
+                },
+                {
+                    title: '操作',
+                    width: "12%",
+                    templet: '#currentTableBar',
+                    fixed: "right",
+                    align: "center"
+                }
                 ]
             ],
             limits: [10, 15, 20, 25, 50, 100],
@@ -209,7 +234,7 @@
                     offset: [openWH[2] + 'px', openWH[3] + 'px'],
                     content: content + util
                         .getHiddenInputHtml("statuses-val", statuses.join(",")) + util
-                        .getHiddenInputHtml("jobBoards-val", jobBoards.join(",")),
+                            .getHiddenInputHtml("jobBoards-val", jobBoards.join(",")),
                     end: function () { //关闭layer后重载表格
                         reloadTable();
                     }
@@ -269,7 +294,7 @@
                     offset: [openWH[2] + 'px', openWH[3] + 'px'],
                     content: content + util.getHiddenInputHtml("id-val", data._id) + util
                         .getHiddenInputHtml("statuses-val", statuses.join(",")) + util
-                        .getHiddenInputHtml("jobBoards-val", jobBoards.join(",")),
+                            .getHiddenInputHtml("jobBoards-val", jobBoards.join(",")),
                     end: function () {
                         reloadTable();
                     }
@@ -346,13 +371,17 @@
             // const data=form.val("currentTableId");
             let whereData = null;
             if (data != null) {
-                whereData = {
-                    status: data.field.status,
-                    jobBoard: data.field.jobBoard,
-                    companyName: data.field.companyName,
-                    companyShorthand: data.field.companyShorthand,
-                    address: data.field.address
-                }
+                whereData={};
+                Object.keys(data.field).forEach(key => {
+                    whereData[key]=data.field[key];
+                });
+                // whereData = {
+                //     status: data.field.status,
+                //     jobBoard: data.field.jobBoard,
+                //     companyName: data.field.companyName,
+                //     companyShorthand: data.field.companyShorthand,
+                //     address: data.field.address
+                // }
             }
             tableObj.reload({
                 page: {

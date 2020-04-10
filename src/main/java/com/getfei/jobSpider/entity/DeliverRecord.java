@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * 投递记录
@@ -20,6 +21,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class DeliverRecord extends BaseEntity{
 
 	private static final long serialVersionUID = 1150653755441523833L;
@@ -27,7 +29,7 @@ public class DeliverRecord extends BaseEntity{
 //	@Id
 	private String _id;
 	/**录入日期*/
-//	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern="yyyy-MM-dd", timezone="GMT+8")
 	private LocalDate date;
 	/**状态*/
 	private String status;
@@ -43,5 +45,12 @@ public class DeliverRecord extends BaseEntity{
 	private String address;
 	/**薪资*/
 	private String salary;
+	/**面试时间*/
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+	private LocalDateTime interviewDateTime;
+	/**面试地点*/
+	private String interviewAddress;
+	/**备注*/
+	private String remark;
 	
 }

@@ -47,7 +47,7 @@ public class DataCenter {
 
 	private static Map<String, Technology> technologyMapping;
 	
-	private static String[] statuses= {"关注","已发起沟通","已投递","收到面试通知","等待面试结果","收到offer","已被拒绝"};
+	private static String[] statuses= {"关注","发起沟通","投递简历","收到面试通知","等待面试结果","收到offer","被拒绝","职位关闭","放弃"};
 	
 	private static String[] jobBoards= {"智联","Boss直聘","前程无忧","拉勾","58同城"};
 

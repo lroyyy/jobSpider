@@ -48,7 +48,7 @@ public class DeliverRecordDaoImpl extends MongoTemplateDaoImpl<DeliverRecord> im
 		List<Criteria> criterias=new ArrayList<>();
 		criteriaMap.forEach((k,v)->{
 			Criteria tmpCriteria=null;
-			if(k.equals("companyName")||k.equals("companyShorthand")||k.equals("address")) {//模糊查询
+			if(k.equals("companyName")||k.equals("companyShorthand")||k.equals("address")||k.equals("remark")) {//模糊查询
 				tmpCriteria=Criteria.where(k).regex("^.*"+v+".*$","i");
 				logger.info("模糊k="+k+",v="+v);
 			}else {//默认精确查询

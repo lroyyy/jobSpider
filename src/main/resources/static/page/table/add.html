@@ -13,13 +13,6 @@
             <div class="layui-input-inline">
                 <select id="subwin-status" name="status" lay-verify="">
                     <option value="">请选择</option>
-                    <!-- <option value="关注">关注</option>
-                    <option value="已发起沟通">已发起沟通</option>
-                    <option value="已投递">已投递</option>
-                    <option value="收到面试通知">收到面试通知</option>
-                    <option value="等待面试结果">等待面试结果</option>
-                    <option value="收到offer">收到offer</option>
-                    <option value="已被拒绝">已被拒绝</option> -->
                 </select>
             </div>
         </div>
@@ -34,17 +27,12 @@
             <div class="layui-input-inline">
                 <select id="subwin-jobBoard" name="jobBoard" lay-verify="">
                     <option value="">请选择</option>
-                    <!-- <option value="智联">智联</option>
-                    <option value="Boss直聘">Boss直聘</option>
-                    <option value="前程无忧">前程无忧</option>
-                    <option value="拉勾">拉勾</option>
-                    <option value="58同城">58同城</option> -->
                 </select>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">公司名称</label>
-            <div class="layui-input-inline">
+            <div class="layui-input-block">
                 <input type="text" name="companyName" value="" class="layui-input">
             </div>
         </div>
@@ -64,6 +52,25 @@
             <label class="layui-form-label">薪资</label>
             <div class="layui-input-inline">
                 <input type="text" name="salary" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">面试时间</label>
+            <div class="layui-input-inline">
+                <input type="text" name="interviewDateTime" id="interviewDateTime" placeholder="yyyy-MM-dd HH:mm:ss" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">面试地点</label>
+            <div class="layui-input-block">
+                <input type="text" name="interviewAddress" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <input type="text" name="remark" value="" class="layui-input">
             </div>
         </div>
 
@@ -89,6 +96,14 @@
         form.render();
         laydate.render({
             elem: '#date'
+            ,value:new Date()
+            ,calendar: true
+        });
+        laydate.render({
+            elem: '#interviewDateTime'
+            ,type: 'datetime'
+            ,format:'yyyy-MM-dd HH:mm:ss'
+            ,calendar: true
         });
 
         // 当前弹出层，防止ID被覆盖
@@ -96,6 +111,7 @@
 
         //监听提交
         form.on('submit(saveBtn)', function (data) {
+            console.log(JSON.stringify(data.field));
             let msg;
             $.when(ajaxPostDeliverRecord(data.field)).done(function () {
                 msg = "投递记录写入成功。";
@@ -169,7 +185,7 @@
 
         //表单初始赋值
         form.val("form-add", {
-            "date": util.dateFtt("yyyy-MM-dd", new Date()),
+            // "date": util.dateFtt("yyyy-MM-dd", new Date()),
             "status": "关注"
         });
     });

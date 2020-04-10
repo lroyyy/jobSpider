@@ -39,12 +39,13 @@ public class DeliverRecordController extends BaseController {
 			@RequestParam(value = "companyName", required = false) String companyName,
 			@RequestParam(value = "companyShorthand", required = false) String companyShorthand,
 			@RequestParam(value = "address", required = false) String address,
+			@RequestParam(value = "remark", required = false) String remark,
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "limit", required = false) Integer limit) {
 		List<DeliverRecord> deliverRecords = null;
-		logger.info("status=" + status + ",jobBoard=" + jobBoard + ",companyName=" + companyName);
+		logger.info("status=" + status + ",jobBoard=" + jobBoard + ",companyName=" + companyName+",remark=" + remark);
 		if (!Util.isValuable(status) && !Util.isValuable(jobBoard) && !Util.isValuable(companyName)
-				&& !Util.isValuable(companyShorthand) && !Util.isValuable(address)) {//无筛选条件
+				&& !Util.isValuable(companyShorthand) && !Util.isValuable(address)&&!Util.isValuable(remark)) {//无筛选条件
 			deliverRecords = deliverRecordService.list();
 		} else {//复合条件
 			Map<String, Object> criteriaMap = new HashMap<>();
@@ -62,6 +63,9 @@ public class DeliverRecordController extends BaseController {
 			}
 			if (Util.isValuable(address)) {
 				criteriaMap.put("address", address);
+			}
+			if (Util.isValuable(remark)) {
+				criteriaMap.put("remark", remark);
 			}
 			deliverRecords = deliverRecordService.getByMultipleCriteria(criteriaMap);
 		}
@@ -89,6 +93,7 @@ public class DeliverRecordController extends BaseController {
 
 	@PostMapping
 	public ResponseResult<String> add(@RequestBody DeliverRecord deliverRecord) {
+		logger.info("entity="+deliverRecord);
 		ResponseResult<String> rr = new ResponseResult<>();
 		deliverRecordService.save(deliverRecord);
 		rr.setState(SUCCESS);
