@@ -1,7 +1,4 @@
 {
-    "clearInfo": {
-        "clearUrl": "api/clear.json"
-    },
     "homeInfo": {
         "title": "首页",
         "icon": "fa fa-home",
@@ -12,48 +9,43 @@
         "image": "images/skill.png",
         "href": ""
     },
-    "menuInfo": {
-        "currency": {
-            "title": "业务",
-            "icon": "fa fa-tasks",
-            "child": [
-                {
-                    "title": "开始",
-                    "href": "page/start.html",
-                    "icon": "fa fa-pie-chart",
-                    "target": "_self"
-                },
-                {
-                    "title": "技术栈",
-                    "href": "page/technology.html",
-                    "icon": "fa fa-stack-overflow",
-                    "target": "_self"
-                },
-                {
-                    "title": "投递记录",
-                    "href": "page/deliverrecord.html",
-                    "icon": "fa fa-envelope-o",
-                    "target": "_self"
-                }
-            ]
-        },
-        "component": {
-            "title": "网站数据",
-            "icon": "fa fa-database",
-            "child": [
-                {
-                    "title": "数据展示",
-                    "href": "page/data-show.html",
-                    "icon": "fa fa-dashboard",
-                    "target": "_self"
-                },
-                {
-                    "title": "font-awesome图标库",
-                    "href": "page/demo/icon.html",
-                    "icon": "fa fa-adn",
-                    "target": "_self"
-                }
-            ]
-        }
-    }
+    "menuInfo": [{
+        "title": "业务",
+        "icon": "fa fa-tasks",
+        "child": [{
+                "title": "开始",
+                "href": "page/start.html",
+                "icon": "fa fa-pie-chart",
+                "target": "_self"
+            },
+            {
+                "title": "技术栈",
+                "href": "page/technology.html",
+                "icon": "fa fa-stack-overflow",
+                "target": "_self"
+            }
+        ]
+    }, {
+        "title": "网站数据",
+        "icon": "fa fa-database",
+        "child": [{
+                "title": "数据展示",
+                "href": "page/data-show.html",
+                "icon": "fa fa-dashboard",
+                "target": "_self"
+            },
+            {
+                "title": "font-awesome图标库",
+                "href": "page/demo/icon.html",
+                "icon": "fa fa-adn",
+                "target": "_self"
+            },
+            {
+                "title": "投递记录",
+                "href": "page/deliverrecord.html",
+                "icon": "fa fa-envelope-o",
+                "target": "_self"
+            }
+        ]
+    }]
 }

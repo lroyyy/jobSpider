@@ -31,17 +31,17 @@ logging:
        index: false
 
 #shiro
-shiro:
+#shiro:
 #  hash-algorithm-name: md5
 #  hash-iterations: 2
   #任何人均可访问
 #  anon-urls:
 #  - /**
- login-url: /page/login.html
- log-out-url: page/index.html
+ #login-url: /page/login.html
+ #log-out-url: page/index.html
   #无权限界面
- unauthorizedUrl: /403
- successUrl: page/index
+ #unauthorizedUrl: /403
+ #successUrl: page/index
 #  authc-ulrs:
 #  - /deliverRecords*
 

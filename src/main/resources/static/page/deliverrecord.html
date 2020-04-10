@@ -87,11 +87,11 @@
 </div>
 
 <script>
-    layui.use(['form', 'table', 'layuimini', 'element'], function () {
+    layui.use(['form', 'table', 'miniPage', 'element'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
-            layuimini = layui.layuimini;
+            miniPage = layui.miniPage;
 
         let statuses, jobBoards;
         var tableObj = table.render({
@@ -196,8 +196,8 @@
             // 监听添加操作
             $(".data-add-btn").on("click", function () {
 
-                var content = layuimini.getHrefContent('page/table/add.html');
-                var openWH = layuimini.getOpenWidthHeight();
+                var content = miniPage.getHrefContent('page/table/add.html');
+                var openWH = miniPage.getOpenWidthHeight();
 
                 var index = layer.open({
                     title: '添加',
@@ -256,8 +256,8 @@
         table.on('tool(currentTableFilter)', function (obj) {
             var data = obj.data;
             if (obj.event === 'edit') { //编辑
-                var content = layuimini.getHrefContent('page/table/edit.html');
-                var openWH = layuimini.getOpenWidthHeight();
+                var content = miniPage.getHrefContent('page/table/edit.html');
+                var openWH = miniPage.getOpenWidthHeight();
 
                 var index = layer.open({
                     title: '编辑',
