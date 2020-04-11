@@ -375,13 +375,6 @@
                 Object.keys(data.field).forEach(key => {
                     whereData[key]=data.field[key];
                 });
-                // whereData = {
-                //     status: data.field.status,
-                //     jobBoard: data.field.jobBoard,
-                //     companyName: data.field.companyName,
-                //     companyShorthand: data.field.companyShorthand,
-                //     address: data.field.address
-                // }
             }
             tableObj.reload({
                 page: {
@@ -392,9 +385,11 @@
             initTableHeaderBtns();
         }
 
+        /**初始化选择框*/
         const initSelects = function () {
             const ajaxGetStatues = function () {
                 var defer = $.Deferred();
+                $.get()
                 $.ajax({
                     type: "get",
                     url: "/" + projectName + "/dataCenter/statuses",
